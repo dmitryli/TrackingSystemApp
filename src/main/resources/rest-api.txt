@@ -1,0 +1,66 @@
+Create Account 
+
+POST http://localhost:8080/accounts/
+{
+	
+	"profile": {
+		"userName": "test1",
+		"email": "dmitryli@outlook.com",
+		"emailOnNewOrders" : true,
+		"emailOnOrderStateChanges" : true
+	}
+}
+------------------------------------------------
+View Account
+GET http://localhost:8080/accounts/{id}
+------------------------------------------------
+Delete Account
+DELETE http://localhost:8080/accounts/{id}
+------------------------------------------------
+Create Orders
+
+POST http://localhost:8080/accounts/{id}/orders
+{
+ "orders" : [
+ {
+	"id": "9405903699300330546275"
+ },
+ {
+	"id": "1Z3948A0YW49650167"
+ }]
+}
+------------------------------------------------
+View orders
+GET http://localhost:8080/accounts/{id}/orders
+------------------------------------------------
+View orders
+GET http://localhost:8080/accounts/{id}/orders/{orderId}
+------------------------------------------------
+Update Order
+POST http://localhost:8080/accounts/{id}/orders/{orderId}
+{
+	"silenceNotifications": true,
+	"treashold" : 300
+ }
+------------------------------------------------
+ 
+View profile
+GET http://localhost:8080/accounts/{id}/profile
+------------------------------------------------
+Update Profile
+PUT http://localhost:8080/accounts/{id}/profile
+{
+	"threashold": {
+		"USPS": 100,
+		"UPS": 100
+	},
+	"emailOnNewOrders": false,
+	"emailOnOrderStateChanges": true
+}
+------------------------------------------------
+Create Feedback
+POST http://localhost:8080/feedbacks
+{
+	"sourceAccoundId" : "54e44637e03855efcfd96dcc",
+	"text" : "sample"
+}

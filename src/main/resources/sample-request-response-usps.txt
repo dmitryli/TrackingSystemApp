@@ -1,0 +1,21 @@
+
+https://secure.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML=<TrackRequest USERID="870WW76TR352"><TrackID ID="EJ958083578US"></TrackID></TrackRequest>
+
+http://production.shippingapis.com/ShippingAPITest.dll?API=TrackV2&XML=<TrackRequest USERID="870WW76TR352"><TrackID ID="EJ958083578US"></TrackID></TrackRequest>
+
+http://production.shippingapis.com/ShippingAPITest.dll?API=TrackV2&XML=<TrackRequest USERID="447NONE04714"><TrackID ID="9405903699300330546275"></TrackID></TrackRequest>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<TrackResponse>
+	<TrackInfo ID="9405903699300330546275">
+		<TrackSummary>Your item was delivered in or at the mailbox at 1:57 pm on January 5, 2015 in HOUSTON, TX 77040.</TrackSummary>
+		<TrackDetail>Out for Delivery, January 5, 2015, 9:10 am, HOUSTON, TX 77040</TrackDetail>
+		<TrackDetail>Sorting Complete, January 5, 2015, 9:00 am, HOUSTON, TX 77040</TrackDetail>
+		<TrackDetail>Arrived at Post Office, January 5, 2015, 8:32 am, HOUSTON, TX 77040</TrackDetail>
+		<TrackDetail>Arrived at USPS Facility, January 4, 2015, 8:46 pm, HOUSTON, TX 77201</TrackDetail>
+		<TrackDetail>Departed USPS Facility, January 2, 2015, 9:25 pm, OAKLAND, CA 94615</TrackDetail>
+		<TrackDetail>Arrived at USPS Origin Facility, January 2, 2015, 5:47 pm, OAKLAND, CA 94615</TrackDetail>
+		<TrackDetail>Accepted at USPS Origin Sort Facility, January 2, 2015, 4:32 pm, PLEASANTON, CA 94588</TrackDetail>
+		<TrackDetail>Pre-Shipment Info Sent to USPS, December 31, 2014</TrackDetail>
+	</TrackInfo>
+</TrackResponse>
