@@ -6,8 +6,6 @@ import java.util.List;
 public class Account {
 
 	private String id = null;
-
-	private Profile profile = null;
 	private List<Order> orders = new ArrayList<Order>();
 
 	public String getId() {
@@ -20,14 +18,6 @@ public class Account {
 
 	public void setOrders(List<Order> orders) {
 		this.orders = orders;
-	}
-
-	public Profile getProfile() {
-		return profile;
-	}
-
-	public void setProfile(Profile profile) {
-		this.profile = profile;
 	}
 
 	public List<Order> getOrders() {

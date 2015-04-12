@@ -1,15 +1,15 @@
-Create Account 
+Registration
 
-POST http://localhost:8080/accounts/
+POST http://localhost:8080/tracking/registration
 {
-	
-	"profile": {
-		"userName": "test1",
-		"email": "dmitryli@outlook.com",
-		"emailOnNewOrders" : true,
-		"emailOnOrderStateChanges" : true
-	}
+	"displayName": "Dima Limonov",
+	"email": "dmitryli@outlook.com",
+	"password" : "qwerty"
 }
+
+returns link to the account created for you:
+for example: http://localhost:8080/tracking/accounts/552ac0cf15444f90bac76d73
+
 ------------------------------------------------
 View Account
 GET http://localhost:8080/accounts/{id}
@@ -17,7 +17,18 @@ GET http://localhost:8080/accounts/{id}
 Delete Account
 DELETE http://localhost:8080/accounts/{id}
 ------------------------------------------------
-Create Orders
+
+Create Orders (1 for example)
+
+POST http://localhost:8080/accounts/{id}/orders
+{
+ "orders" : [
+ {
+	"id": "1Z3948A0YW49650167"
+ }]
+}
+------------------------------------------------
+Create Orders (supports many as well)
 
 POST http://localhost:8080/accounts/{id}/orders
 {
@@ -33,29 +44,37 @@ POST http://localhost:8080/accounts/{id}/orders
 View orders
 GET http://localhost:8080/accounts/{id}/orders
 ------------------------------------------------
-View orders
+View order
 GET http://localhost:8080/accounts/{id}/orders/{orderId}
 ------------------------------------------------
-Update Order
-POST http://localhost:8080/accounts/{id}/orders/{orderId}
+Mute Order
+POST http://localhost:8080/accounts/{id}/orders/{orderId}/mute
 {
-	"silenceNotifications": true,
-	"treashold" : 300
- }
+	"muteNotifications": true
+}
 ------------------------------------------------
- 
-View profile
-GET http://localhost:8080/accounts/{id}/profile
-------------------------------------------------
-Update Profile
-PUT http://localhost:8080/accounts/{id}/profile
+Unmute Order
+POST http://localhost:8080/accounts/{id}/orders/{orderId}/mute
 {
-	"threashold": {
-		"USPS": 100,
-		"UPS": 100
-	},
-	"emailOnNewOrders": false,
-	"emailOnOrderStateChanges": true
+	"muteNotifications": false
+}
+------------------------------------------------
+Change threshold
+POST http://localhost:8080/accounts/{id}/orders/{orderId}/threshold
+{
+	"threshold": 1000
+}
+------------------------------------------------
+Change state to archive
+POST http://localhost:8080/accounts/{id}/orders/{orderId}/state
+{
+	"state": "ARCHIVED"
+}
+------------------------------------------------
+Change state to active
+POST http://localhost:8080/accounts/{id}/orders/{orderId}/state
+{
+	"state": "ACTIVE"
 }
 ------------------------------------------------
 Create Feedback

@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.dimalimonov.tracking.domain.Feedback;
+import com.dimalimonov.tracking.service.FeedbackService;
 
 @Service("feedbackService")
 public class FeedbackServiceImpl implements FeedbackService {

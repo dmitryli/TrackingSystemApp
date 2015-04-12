@@ -7,9 +7,14 @@ public class Order {
 	private String id = null;
 	private Carrier carrier = null;
 	private long creationTime = 0;
-	private boolean silenceNotifications = false;
 	private long lastNotificationTime = 0;
-	private int treashold = 0;
+	private int threshold = 0;
+	private boolean muteNotifications = false;
+	private long whenNotificationShouldBeSent = 0;
+	private OrderState state = null;
+	private OrderStatus shippingStatus = null;
+
+	private List<Activity> activities = null;
 
 	public String getDateTime() {
 		String dateTime = null;
@@ -19,15 +24,37 @@ public class Order {
 		return dateTime;
 	}
 
-	public String getStatus() {
-		String status = null;
-		if (getActivities() != null) {
-			status = getActivities().get(0).getStatusDescription();
-		}
-		return status;
+	public boolean isMuteNotifications() {
+		return muteNotifications;
 	}
 
-	private List<Activity> activities = null;
+	public void setMuteNotifications(boolean muteNotifications) {
+		this.muteNotifications = muteNotifications;
+	}
+
+	public long getWhenNotificationShouldBeSent() {
+		return whenNotificationShouldBeSent;
+	}
+
+	public void setWhenNotificationShouldBeSent(long whenNotificationShouldBeSent) {
+		this.whenNotificationShouldBeSent = whenNotificationShouldBeSent;
+	}
+
+	public OrderState getState() {
+		return state;
+	}
+
+	public void setState(OrderState state) {
+		this.state = state;
+	}
+
+	public OrderStatus getShippingStatus() {
+		return shippingStatus;
+	}
+
+	public void setShippingStatus(OrderStatus status) {
+		this.shippingStatus = status;
+	}
 
 	public List<Activity> getActivities() {
 		return activities;
@@ -53,14 +80,6 @@ public class Order {
 		this.carrier = carrier;
 	}
 
-	public boolean isSilenceNotifications() {
-		return silenceNotifications;
-	}
-
-	public void setSilenceNotifications(boolean silenceNotifications) {
-		this.silenceNotifications = silenceNotifications;
-	}
-
 	public long getLastNotificationTime() {
 		return lastNotificationTime;
 	}
@@ -77,12 +96,12 @@ public class Order {
 		this.creationTime = creationTime;
 	}
 
-	public int getTreashold() {
-		return treashold;
+	public int getThreshold() {
+		return threshold;
 	}
 
-	public void setTreashold(int treashold) {
-		this.treashold = treashold;
+	public void setThreshold(int threshold) {
+		this.threshold = threshold;
 	}
 
 }
