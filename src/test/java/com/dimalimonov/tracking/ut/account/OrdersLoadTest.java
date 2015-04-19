@@ -1,4 +1,4 @@
-package com.dimalimonov.tracking.account.tests;
+package com.dimalimonov.tracking.ut.account;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.core.io.Resource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -27,6 +28,7 @@ import com.dimalimonov.tracking.service.AccountOrderService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
+@ActiveProfiles("test")
 public class OrdersLoadTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrdersLoadTest.class);

@@ -14,6 +14,6 @@ public interface CustomerService {
 
 	public abstract void deleteByEmail(String id);
 
-	public abstract void update(Customer customer);
+	public abstract Customer update(Customer customer);
 
 }

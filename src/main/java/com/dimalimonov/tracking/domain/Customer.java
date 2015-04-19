@@ -15,6 +15,7 @@ public class Customer {
 	private boolean emailWhenNewOrderAdded = true;
 	private boolean emailWhenOrderStateChanges = true;
 	private boolean emailWhenThresholdExceeded = true;
+	private int emailNotificationTime = 0;
 
 	private List<String> accountsList = new ArrayList<String>();
 	private Map<String, Integer> defaultThreshold = new HashMap<String, Integer>();
@@ -104,7 +105,22 @@ public class Customer {
 	}
 
 	public String getAccountId() {
-		return accountsList.get(0);
+		String account = null;
+		if (accountsList != null && accountsList.size() > 0) {
+			account = accountsList.get(0);
+		}
+		return account;
 	}
+
+	public int getEmailNotificationTime() {
+		return emailNotificationTime;
+	}
+
+	public void setEmailNotificationTime(int emailNotificationTime) {
+		this.emailNotificationTime = emailNotificationTime;
+	}
+
+	
+	
 
 }

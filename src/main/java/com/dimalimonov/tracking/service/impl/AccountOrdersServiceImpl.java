@@ -9,12 +9,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.Carrier;
 import com.dimalimonov.tracking.domain.Order;
+import com.dimalimonov.tracking.domain.OrderDeliveryStatus;
 import com.dimalimonov.tracking.domain.OrderState;
 import com.dimalimonov.tracking.domain.OrderStatus;
 import com.dimalimonov.tracking.errors.DuplicateOrderException;
@@ -22,10 +24,12 @@ import com.dimalimonov.tracking.errors.ErrorCodes;
 import com.dimalimonov.tracking.errors.ErrorMessages;
 import com.dimalimonov.tracking.service.AccountOrderService;
 import com.dimalimonov.tracking.service.CarrierService;
+import com.dimalimonov.tracking.service.EmailService;
 
-@Service("accountService")
-public class AccountServiceImpl implements AccountOrderService {
-	private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
+@Service("accountOrderService")
+@Profile("production")
+public class AccountOrdersServiceImpl implements AccountOrderService {
+	private static final Logger logger = LoggerFactory.getLogger(AccountOrdersServiceImpl.class);
 	private static final String COLLECTION_NAME = "ptrackaccounts";
 
 	private final static String UPS_PREFIX = "1Z";
@@ -98,8 +102,10 @@ public class AccountServiceImpl implements AccountOrderService {
 		if (orders != null) {
 			for (Order o : orders) {
 				o = generateDefaultOrderInformation(o);
+				o = setCarrierStatusUpdates(o);
 				logger.info("Adding order {} to account {}", o.getId(), account.getId());
 				account.addOrder(o);
+
 			}
 		}
 
@@ -194,6 +200,18 @@ public class AccountServiceImpl implements AccountOrderService {
 		return o;
 	}
 
+	@Override
+	public Order updateDescription(String accountId, Order order) {
+		Account a = findAccount(accountId);
+		Order o = findOrder(a, order.getId());
+		if (o != null) {
+			o.setDescription(order.getDescription());
+		}
+
+		update(a);
+		return o;
+	}
+
 	private List<String> getDuplicateList(List<Order> existingOrders, List<Order> orders) {
 		List<String> duplicateList = new ArrayList<String>();
 
@@ -218,18 +236,16 @@ public class AccountServiceImpl implements AccountOrderService {
 		order.setLastNotificationTime(System.currentTimeMillis());
 		order.setMuteNotifications(false);
 		order.setState(OrderState.ACTIVE);
-		order.setShippingStatus(OrderStatus.PRESHIPPED);
+		order.setOrderDeliveryStatus(OrderDeliveryStatus.PRESHIPPED);
 
 		if ((order.getCarrier() != null && order.getCarrier().equals(Carrier.UPS))
 				|| order.getId().startsWith(UPS_PREFIX)) {
 			order.setCarrier(Carrier.UPS);
 			order.setThreshold(upsThreshold);
-			// order.setActivities(upsService.getActivityList(order.getId()));
 		} else if ((order.getCarrier() != null && order.getCarrier().equals(Carrier.USPS))
 				|| order.getId().startsWith(USPS_PREFIX)) {
 			order.setCarrier(Carrier.USPS);
 			order.setThreshold(uspsThreshold);
-			// order.setActivities(uspsService.getActivityList(order.getId()));
 		} else {
 			logger.error(ErrorCodes.CARRIER_NOT_SUPPORTED
 					+ String.format(ErrorMessages.CARRIER_NOT_SUPPORTED_ERROR_MESSAGE.getErrorMessage(), order
@@ -237,6 +253,21 @@ public class AccountServiceImpl implements AccountOrderService {
 		}
 
 		return order;
+	}
+
+	private Order setCarrierStatusUpdates(Order order) {
+		if (order.getCarrier().equals(Carrier.UPS)) {
+			order.setActivities(upsService.getActivityList(order.getId()));
+		} else if (order.getCarrier().equals(Carrier.USPS)) {
+			order.setActivities(uspsService.getActivityList(order.getId()));
+		} else {
+			logger.error(ErrorCodes.CARRIER_NOT_SUPPORTED
+					+ String.format(ErrorMessages.CARRIER_NOT_SUPPORTED_ERROR_MESSAGE.getErrorMessage(), order
+							.getCarrier().toString()));
+		}
+
+		return order;
+
 	}
 
 }

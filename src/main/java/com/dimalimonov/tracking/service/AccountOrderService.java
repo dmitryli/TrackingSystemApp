@@ -32,4 +32,6 @@ public interface AccountOrderService {
 	public abstract Order muteNotifications(String accountId, Order order);
 
 	public abstract Order updateTreshold(String accountId, Order order);
+	
+	public Order updateDescription(String accountId, Order order);
 }

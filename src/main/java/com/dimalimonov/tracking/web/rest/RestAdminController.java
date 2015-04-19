@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dimalimonov.tracking.domain.Account;
+import com.dimalimonov.tracking.domain.Customer;
 import com.dimalimonov.tracking.domain.Feedback;
 import com.dimalimonov.tracking.service.AccountOrderService;
+import com.dimalimonov.tracking.service.CustomerService;
 import com.dimalimonov.tracking.service.FeedbackService;
 
 @RestController
@@ -26,6 +28,9 @@ public class RestAdminController {
 
 	@Autowired
 	private AccountOrderService accountService = null;
+	
+	@Autowired
+	private CustomerService customerService = null;
 
 	@RequestMapping(value = "/accounts", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public List<Account> getAccounts() {
@@ -40,6 +45,12 @@ public class RestAdminController {
 		for (Account a : all) {
 			accountService.deleteAccount(a.getId());
 		}
+
+	}
+	
+	@RequestMapping(value = "/customers/{id}", method = RequestMethod.DELETE)
+	public void findCustomerById(@PathVariable("id") String id) {
+		customerService.deleteById(id);
 
 	}
 

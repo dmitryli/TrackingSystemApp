@@ -38,21 +38,30 @@ public class UspsServiceImpl implements CarrierService {
 		List<Activity> activityList = new ArrayList<Activity>();
 		try {
 			Document document = DocumentHelper.parseText(fullStatus);
+			logger.info("full status is {}", document.asXML());
 
-			Element statusAct = (Element) document.selectSingleNode("/TrackResponse/TrackInfo/TrackSummary");
 			Activity status = new Activity();
+			Element statusAct = (Element) document.selectSingleNode("/TrackResponse/TrackInfo/TrackSummary");
+			// can happen if the order number is duplicated and more details are
+			// required
+			if (statusAct == null) {
+				statusAct = (Element) document.selectSingleNode("/TrackResponse/TrackInfo/Error/Description");
+			} 
 			status.setStatusDescription(statusAct.getText());
 			activityList.add(status);
-
+			
+			// Add the details if exist
 			List<Element> activities = (List<Element>) document.selectNodes("/TrackResponse/TrackInfo/TrackDetail");
-			for (Element activity : activities) {
-				Activity a = new Activity();
-
-				a.setStatusDescription(activity.getText());
-
-				activityList.add(a);
+			if (activities != null) {
+				for (Element activity : activities) {
+					Activity a = new Activity();
+					a.setStatusDescription(activity.getText());
+					activityList.add(a);
+				}
+			
 			}
-			logger.info("Total of {}", activities.size());
+
+			logger.info("Total of {} activities for the package", activityList.size());
 		} catch (DocumentException e) {
 			logger.error(e.getMessage());
 		}

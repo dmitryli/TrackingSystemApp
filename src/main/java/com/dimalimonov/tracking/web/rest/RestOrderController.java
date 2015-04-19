@@ -43,7 +43,6 @@ public class RestOrderController {
 		String location = String.format(Constants.ACCOUNT_URI, accountId);
 		headers.setLocation(URI.create(location));
 		ResponseEntity<List<Order>> re = new ResponseEntity<List<Order>>(list, headers, HttpStatus.CREATED);
-
 		return re;
 	}
 
@@ -83,6 +82,15 @@ public class RestOrderController {
 		logger.info("changing threshold for order {} on account {}", orderId, accountId);
 		order.setId(orderId);
 		accountService.changeState(accountId, order);
+
+	}
+	
+	@RequestMapping(value = "/accounts/{id}/orders/{orderId}/description", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public void updateDescription(@PathVariable("id") String accountId, @PathVariable("orderId") String orderId,
+			@RequestBody Order order) {
+		logger.info("changing description for order {} on account {}", orderId, accountId);
+		order.setId(orderId);
+		accountService.updateDescription(accountId, order);
 
 	}
 

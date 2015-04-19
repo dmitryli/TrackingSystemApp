@@ -1,4 +1,4 @@
-package com.dimalimonov.tracking.account.tests;
+package com.dimalimonov.tracking.ut.account;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -19,6 +20,7 @@ import com.dimalimonov.tracking.service.AccountOrderService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
+@ActiveProfiles("test")
 public class AccountOrderServiceTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(AccountOrderServiceTest.class);

@@ -1,4 +1,4 @@
-package com.dimalimonov.tracking.account.tests;
+package com.dimalimonov.tracking.ut.account;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -18,6 +19,7 @@ import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.Carrier;
 import com.dimalimonov.tracking.domain.Order;
+import com.dimalimonov.tracking.domain.OrderDeliveryStatus;
 import com.dimalimonov.tracking.domain.OrderState;
 import com.dimalimonov.tracking.domain.OrderStatus;
 import com.dimalimonov.tracking.service.AccountOrderService;
@@ -25,6 +27,7 @@ import com.dimalimonov.tracking.service.AccountOrderService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
+@ActiveProfiles("test")
 public class OrderServiceTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrderServiceTest.class);
@@ -46,6 +49,8 @@ public class OrderServiceTest {
 		Order o = new Order();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
+		o.setDescription("My favorite Order");
+
 
 		accountOrderService.createOrder(account.getId(), o);
 
@@ -57,9 +62,10 @@ public class OrderServiceTest {
 		Order result = find.getOrders().get(0);
 		Assert.assertTrue(result.getId().equals("9405903699300380069915"));
 		Assert.assertTrue(result.getCarrier().equals(Carrier.USPS));
+		Assert.assertEquals(result.getDescription(),"My favorite Order");
 		Assert.assertEquals(result.getThreshold(), uspsThreshold.intValue());
 		Assert.assertEquals(result.getState(), OrderState.ACTIVE);
-		Assert.assertEquals(result.getShippingStatus(), OrderStatus.PRESHIPPED);
+		Assert.assertEquals(result.getOrderDeliveryStatus(), OrderDeliveryStatus.PRESHIPPED);
 
 		accountOrderService.deleteAccount(account.getId());
 
@@ -223,7 +229,7 @@ public class OrderServiceTest {
 		Assert.assertTrue(result.getCarrier().equals(Carrier.USPS));
 		Assert.assertEquals(result.getThreshold(), uspsThreshold.intValue());
 		Assert.assertEquals(result.getState(), OrderState.ACTIVE);
-		Assert.assertEquals(result.getShippingStatus(), OrderStatus.PRESHIPPED);
+		Assert.assertEquals(result.getOrderDeliveryStatus(), OrderDeliveryStatus.PRESHIPPED);
 
 		accountOrderService.deleteAccount(account.getId());
 

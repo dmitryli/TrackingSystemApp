@@ -11,6 +11,31 @@ returns link to the account created for you:
 for example: http://localhost:8080/tracking/accounts/552ac0cf15444f90bac76d73
 
 ------------------------------------------------
+Find customer by email
+GET http://localhost:8080/tracking/customers?email=<EMAIL>
+------------------------------------------------
+Find customer by id
+GET http://localhost:8080/tracking/customers/{id}
+------------------------------------------------
+Update Customer: (Id, Role and AccountId will be ignored on update from REST API)
+POST localhost:8080/tracking/customers/5531e3db415d1a482a2d7f19
+{
+	"id": "aaaaa",
+	"displayName": "aaaaa",
+	"email": "aaaaa@test.com",
+	"phoneNumber": "925-aaaaaaaa",
+	"password": "aaaaa",
+	"role": "aaaaa",
+	"emailWhenNewOrderAdded": true,
+	"emailWhenOrderStateChanges": true,
+	"emailWhenThresholdExceeded": true,
+	"defaultThreshold": {
+		"USPS": 100,
+		"UPS": 100
+	},
+	"accountId": "aaaaa"
+}
+------------------------------------------------
 View Account
 GET http://localhost:8080/accounts/{id}
 ------------------------------------------------
@@ -76,6 +101,13 @@ POST http://localhost:8080/accounts/{id}/orders/{orderId}/state
 {
 	"state": "ACTIVE"
 }
+------------------------------------------------
+Change description
+POST http://localhost:8080/accounts/{id}/orders/{orderId}/description
+{
+	"description": "some dummy"
+}
+
 ------------------------------------------------
 Create Feedback
 POST http://localhost:8080/feedbacks

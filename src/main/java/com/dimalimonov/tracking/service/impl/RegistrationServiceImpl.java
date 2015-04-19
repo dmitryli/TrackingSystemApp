@@ -10,6 +10,7 @@ import com.dimalimonov.tracking.domain.Customer;
 import com.dimalimonov.tracking.domain.RegistrationResult;
 import com.dimalimonov.tracking.service.AccountOrderService;
 import com.dimalimonov.tracking.service.CustomerService;
+import com.dimalimonov.tracking.service.EmailService;
 import com.dimalimonov.tracking.service.RegistrationService;
 
 @Service("registrationService")
@@ -22,6 +23,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 	@Autowired
 	private CustomerService customerService = null;
+	
+	@Autowired
+	private EmailService emailService = null;
 
 	@Override
 	public RegistrationResult register(Customer c) {
@@ -39,6 +43,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 		registration.setAccount(account);
 		registration.setCustomer(c);
 		logger.info("Completed registration for customer {} with account {}", c.getEmail(), c.getAccountId());
+		
+		emailService.sendWelcomeEmail(c.getEmail(), c.getDisplayName(), account.getId());
 		return registration;
 	}
 

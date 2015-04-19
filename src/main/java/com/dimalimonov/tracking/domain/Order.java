@@ -6,14 +6,15 @@ public class Order {
 
 	private String id = null;
 	private Carrier carrier = null;
+	private String description = null;
 	private long creationTime = 0;
 	private long lastNotificationTime = 0;
 	private int threshold = 0;
 	private boolean muteNotifications = false;
 	private long whenNotificationShouldBeSent = 0;
 	private OrderState state = null;
-	private OrderStatus shippingStatus = null;
-
+//	private OrderStatus shippingStatus = null;
+	private OrderDeliveryStatus orderDeliveryStatus = null;
 	private List<Activity> activities = null;
 
 	public String getDateTime() {
@@ -48,12 +49,13 @@ public class Order {
 		this.state = state;
 	}
 
-	public OrderStatus getShippingStatus() {
-		return shippingStatus;
+
+	public OrderDeliveryStatus getOrderDeliveryStatus() {
+		return orderDeliveryStatus;
 	}
 
-	public void setShippingStatus(OrderStatus status) {
-		this.shippingStatus = status;
+	public void setOrderDeliveryStatus(OrderDeliveryStatus orderDeliveryStatus) {
+		this.orderDeliveryStatus = orderDeliveryStatus;
 	}
 
 	public List<Activity> getActivities() {
@@ -62,6 +64,19 @@ public class Order {
 
 	public void setActivities(List<Activity> activities) {
 		this.activities = activities;
+		if (this.activities!=null && this.activities.size() > 0) {
+			Activity lastActivity = activities.get(0);
+			if (lastActivity.getStatusDescription().contains("was delivered")) {
+				setOrderDeliveryStatus(OrderDeliveryStatus.DELIVERED);
+			} else if (lastActivity.getStatusDescription().contains("Out for Delivery") || lastActivity.getStatusDescription().contains("Sorting") || 
+					lastActivity.getStatusDescription().contains("Accepted") || lastActivity.getStatusDescription().contains("Arrived") || lastActivity.getStatusDescription().contains("Departed")) {
+				setOrderDeliveryStatus(OrderDeliveryStatus.SHIPPED);
+			}  else if (lastActivity.getStatusDescription().contains("Pre-Shipment")){
+				setOrderDeliveryStatus(OrderDeliveryStatus.PRESHIPPED);
+			}  else if (lastActivity.getStatusDescription().contains("Duplicate")){
+				setOrderDeliveryStatus(OrderDeliveryStatus.DUPLICATE);
+			}
+		}
 	}
 
 	public String getId() {
@@ -103,5 +118,14 @@ public class Order {
 	public void setThreshold(int threshold) {
 		this.threshold = threshold;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 
 }

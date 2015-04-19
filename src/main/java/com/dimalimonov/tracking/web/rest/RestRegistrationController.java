@@ -1,6 +1,8 @@
 package com.dimalimonov.tracking.web.rest;
 
 import java.net.URI;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.Customer;
+import com.dimalimonov.tracking.domain.Link;
 import com.dimalimonov.tracking.domain.RegistrationResult;
 import com.dimalimonov.tracking.errors.DuplicateCustomerException;
 import com.dimalimonov.tracking.errors.RestError;
@@ -29,13 +31,23 @@ public class RestRegistrationController {
 	private RegistrationService registrationService = null;
 
 	@RequestMapping(value = "/registration", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<Account> registerNewCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<List<Link>> registerNewCustomer(@RequestBody Customer customer) {
 
 		RegistrationResult register = registrationService.register(customer);
+
+		String accountLocation = String.format(Constants.ACCOUNT_URI, register.getAccount().getId());
+		String customerLocation = String.format(Constants.CUSTOMER_URI, register.getCustomer().getId());
+
 		HttpHeaders headers = new HttpHeaders();
-		String location = String.format(Constants.ACCOUNT_URI, register.getAccount().getId());
-		headers.setLocation(URI.create(location));
-		ResponseEntity<Account> re = new ResponseEntity<Account>(register.getAccount(), headers, HttpStatus.CREATED);
+		headers.setLocation(URI.create(accountLocation));
+
+		Link accountLink = new Link("account", accountLocation);
+		Link customerLink = new Link("customer", customerLocation);
+		List<Link> list = new LinkedList<Link>();
+		list.add(accountLink);
+		list.add(customerLink);
+
+		ResponseEntity<List<Link>> re = new ResponseEntity<List<Link>>(list, headers, HttpStatus.CREATED);
 
 		return re;
 	}

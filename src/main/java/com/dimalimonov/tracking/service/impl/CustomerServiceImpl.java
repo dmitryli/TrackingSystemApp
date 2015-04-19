@@ -34,6 +34,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Value("${ups.threshold}")
 	public Integer upsThreshold = null;
+	
+	@Value("${notification.time}")
+	public Integer emailNotificationTime = null;
 
 	@Autowired
 	private AccountOrderService accountService = null;
@@ -45,6 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public Customer create(Customer customer) {
 		logger.info("Attepting create a customer with email {}", customer.getEmail());
 		if (!StringUtils.isEmpty(customer.getEmail()) && findByEmail(customer.getEmail()) != null) {
+			logger.info("Customer with email {} already exists", customer.getEmail());
 			throw new DuplicateCustomerException(customer.getEmail());
 		}
 
@@ -57,6 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setRole(ROLE_USER);
 		customer.addCarrierThreshold(Carrier.UPS, upsThreshold);
 		customer.addCarrierThreshold(Carrier.USPS, uspsThreshold);
+		customer.setEmailNotificationTime(emailNotificationTime);
 		mongoOperations.insert(customer, COLLECTION_NAME);
 		logger.info("customer with email {} and id {} has been created", customer.getEmail(), customer.getId());
 
@@ -104,8 +109,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public void update(Customer customer) {
+	public Customer update(Customer customer) {
 		mongoOperations.save(customer, COLLECTION_NAME);
+		return customer;
 
 	}
 
