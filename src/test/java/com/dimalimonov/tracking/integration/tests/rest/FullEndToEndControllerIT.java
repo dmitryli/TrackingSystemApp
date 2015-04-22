@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -24,15 +25,16 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
-import com.dimalimonov.tracking.domain.Customer;
-import com.dimalimonov.tracking.domain.Order;
-import com.dimalimonov.tracking.domain.OrderCollection;
+import com.dimalimonov.tracking.domain.User;
+import com.dimalimonov.tracking.domain.Delivery;
+import com.dimalimonov.tracking.domain.DeliveriesCollection;
 import com.dimalimonov.tracking.util.Constants;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("production")
+
 public class FullEndToEndControllerIT {
 
 	private static final Logger logger = LoggerFactory.getLogger(FullEndToEndControllerIT.class);
@@ -45,7 +47,7 @@ public class FullEndToEndControllerIT {
 	
 	@Test
 	public void testEndToEnd() throws Exception {
-		Customer c = new Customer();
+		User c = new User();
 		c.setDisplayName("My Test Customer");
 		c.setEmail("dmitryli@outlook.com");
 		c.setPassword("integration");
@@ -62,34 +64,34 @@ public class FullEndToEndControllerIT {
 		Assert.assertNotNull(accountEntity.getBody());
 		Assert.assertEquals(HttpStatus.OK, accountEntity.getStatusCode());
 
-		Map<String, String> customerMap = list.get(1);
-		String customerLink = customerMap.get("href");
-		logger.info("customer {}", customerLink);
-		ResponseEntity<Customer> customerEntity = template.getForEntity(customerLink, Customer.class);
-		Assert.assertNotNull(customerEntity.getBody());
-		Assert.assertEquals(HttpStatus.OK, customerEntity.getStatusCode());
+		Map<String, String> userMap = list.get(1);
+		String userLink = userMap.get("href");
+		logger.info("user {}", userLink);
+		ResponseEntity<User> userEntity = template.getForEntity(userLink, User.class);
+		Assert.assertNotNull(userEntity.getBody());
+		Assert.assertEquals(HttpStatus.OK, userEntity.getStatusCode());
 
-		String ordersUri = accountLink + "/orders";
+		String deliveryUri = accountLink + "/deliveries";
 
 		File file = uspsNumbers.getFile();
 		List<String> lines = FileUtils.readLines(file);
 
 		for (String s : lines) {
-			Order o = new Order();
+			Delivery o = new Delivery();
 			o.setId(s);
-			OrderCollection collection = new OrderCollection();
-			collection.setOrders(Collections.singletonList(o));
-			ResponseEntity<List> ordersResponse = template.postForEntity(ordersUri, collection, List.class);
-			Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+			DeliveriesCollection collection = new DeliveriesCollection();
+			collection.setDeliveries(Collections.singletonList(o));
+			ResponseEntity<List> deliveryResponse = template.postForEntity(deliveryUri, collection, List.class);
+			Assert.assertEquals(HttpStatus.CREATED, deliveryResponse.getStatusCode());
 		}
 
 		// Find created account
 		Account found = template.getForObject(accountLink, Account.class);
 		Assert.assertNotNull(found);
 		
-		// Delete account and customer
-//		template.delete(accountLink);
-//		template.delete(customerLink);
+		// Delete account and user
+		template.delete(accountLink);
+		template.delete(userLink);
 
 	}
 

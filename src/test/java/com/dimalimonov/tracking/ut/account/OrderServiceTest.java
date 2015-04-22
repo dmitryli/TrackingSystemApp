@@ -18,11 +18,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.Carrier;
-import com.dimalimonov.tracking.domain.Order;
-import com.dimalimonov.tracking.domain.OrderDeliveryStatus;
-import com.dimalimonov.tracking.domain.OrderState;
-import com.dimalimonov.tracking.domain.OrderStatus;
-import com.dimalimonov.tracking.service.AccountOrderService;
+import com.dimalimonov.tracking.domain.Delivery;
+import com.dimalimonov.tracking.domain.DeliveryState;
+import com.dimalimonov.tracking.service.AccountDeliveriesService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
@@ -38,7 +36,7 @@ public class OrderServiceTest {
 	public Integer upsThreshold = null;
 
 	@Autowired
-	private AccountOrderService accountOrderService = null;
+	private AccountDeliveriesService accountOrderService = null;
 
 	@Test
 	public void createOneOrder() {
@@ -46,26 +44,25 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 		o.setDescription("My favorite Order");
 
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
 		Account find = accountOrderService.findAccount(account.getId());
 		Assert.assertNotNull(find);
-		Assert.assertNotNull(find.getOrders());
-		Assert.assertTrue(find.getOrders().size() == 1);
+		Assert.assertNotNull(find.getDeliveries());
+		Assert.assertTrue(find.getDeliveries().size() == 1);
 
-		Order result = find.getOrders().get(0);
+		Delivery result = find.getDeliveries().get(0);
 		Assert.assertTrue(result.getId().equals("9405903699300380069915"));
 		Assert.assertTrue(result.getCarrier().equals(Carrier.USPS));
 		Assert.assertEquals(result.getDescription(),"My favorite Order");
 		Assert.assertEquals(result.getThreshold(), uspsThreshold.intValue());
-		Assert.assertEquals(result.getState(), OrderState.ACTIVE);
-		Assert.assertEquals(result.getOrderDeliveryStatus(), OrderDeliveryStatus.PRESHIPPED);
+		Assert.assertEquals(result.getState(), DeliveryState.ACTIVE);
 
 		accountOrderService.deleteAccount(account.getId());
 
@@ -77,20 +74,20 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		Order find = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertNotNull(find);
 
-		find.setState(OrderState.ARCHIVED);
+		find.setState(DeliveryState.ARCHIVED);
 		accountOrderService.changeState(account.getId(), find);
 
-		Order find2 = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
-		Assert.assertEquals(OrderState.ARCHIVED, find2.getState());
+		Delivery find2 = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
+		Assert.assertEquals(DeliveryState.ARCHIVED, find2.getState());
 
 		accountOrderService.deleteAccount(account.getId());
 
@@ -102,29 +99,29 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		Order find = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertNotNull(find);
 
 		// set to archive
-		find.setState(OrderState.ARCHIVED);
+		find.setState(DeliveryState.ARCHIVED);
 		accountOrderService.changeState(account.getId(), find);
 
-		Order find2 = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
-		Assert.assertEquals(OrderState.ARCHIVED, find2.getState());
+		Delivery find2 = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
+		Assert.assertEquals(DeliveryState.ARCHIVED, find2.getState());
 
 		// set to active
-		find2.setState(OrderState.ACTIVE);
+		find2.setState(DeliveryState.ACTIVE);
 		accountOrderService.changeState(account.getId(), find2);
 
-		Order find3 = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find3 = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 
-		Assert.assertEquals(OrderState.ACTIVE, find3.getState());
+		Assert.assertEquals(DeliveryState.ACTIVE, find3.getState());
 
 		accountOrderService.deleteAccount(account.getId());
 
@@ -136,19 +133,19 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		Order find = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertNotNull(find);
 
 		find.setThreshold(1000);
 		accountOrderService.updateTreshold(account.getId(), find);
 
-		Order find2 = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find2 = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertEquals(1000, find2.getThreshold());
 
 		accountOrderService.deleteAccount(account.getId());
@@ -161,19 +158,19 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		Order find = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertNotNull(find);
 
 		find.setMuteNotifications(true);
 		accountOrderService.muteNotifications(account.getId(), find);
 
-		Order find2 = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find2 = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertEquals(true, find2.isMuteNotifications());
 
 		accountOrderService.deleteAccount(account.getId());
@@ -186,26 +183,26 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		Order find = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertNotNull(find);
 
 		// mute
 		find.setMuteNotifications(true);
 		accountOrderService.muteNotifications(account.getId(), find);
 
-		Order find2 = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find2 = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertEquals(true, find2.isMuteNotifications());
 
 		// unmute
 		find.setMuteNotifications(false);
 		accountOrderService.muteNotifications(account.getId(), find);
-		Order find3 = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery find3 = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertEquals(false, find3.isMuteNotifications());
 
 		accountOrderService.deleteAccount(account.getId());
@@ -218,18 +215,17 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		Order result = accountOrderService.findOrder(account.getId(), "9405903699300380069915");
+		Delivery result = accountOrderService.findDelivery(account.getId(), "9405903699300380069915");
 		Assert.assertTrue(result.getId().equals("9405903699300380069915"));
 		Assert.assertTrue(result.getCarrier().equals(Carrier.USPS));
 		Assert.assertEquals(result.getThreshold(), uspsThreshold.intValue());
-		Assert.assertEquals(result.getState(), OrderState.ACTIVE);
-		Assert.assertEquals(result.getOrderDeliveryStatus(), OrderDeliveryStatus.PRESHIPPED);
+		Assert.assertEquals(result.getState(), DeliveryState.ACTIVE);
 
 		accountOrderService.deleteAccount(account.getId());
 
@@ -241,31 +237,31 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		List<Order> list = new LinkedList<Order>();
-		Order o = new Order();
+		List<Delivery> list = new LinkedList<Delivery>();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 		list.add(o);
 
-		o = new Order();
+		o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300372857186");
 		list.add(o);
 
-		accountOrderService.createOrders(account.getId(), list);
+		accountOrderService.createDeliveries(account.getId(), list);
 
 		Account find = accountOrderService.findAccount(account.getId());
 		Assert.assertNotNull(find);
-		Assert.assertNotNull(find.getOrders());
-		Assert.assertTrue(find.getOrders().size() == 2);
+		Assert.assertNotNull(find.getDeliveries());
+		Assert.assertTrue(find.getDeliveries().size() == 2);
 
-		Assert.assertTrue(find.getOrders().get(0).getId().equals("9405903699300380069915"));
-		Assert.assertTrue(find.getOrders().get(0).getCarrier().equals(Carrier.USPS));
-		Assert.assertEquals(find.getOrders().get(0).getThreshold(), uspsThreshold.intValue());
+		Assert.assertTrue(find.getDeliveries().get(0).getId().equals("9405903699300380069915"));
+		Assert.assertTrue(find.getDeliveries().get(0).getCarrier().equals(Carrier.USPS));
+		Assert.assertEquals(find.getDeliveries().get(0).getThreshold(), uspsThreshold.intValue());
 
-		Assert.assertTrue(find.getOrders().get(1).getId().equals("9405903699300372857186"));
-		Assert.assertTrue(find.getOrders().get(1).getCarrier().equals(Carrier.USPS));
-		Assert.assertEquals(find.getOrders().get(1).getThreshold(), uspsThreshold.intValue());
+		Assert.assertTrue(find.getDeliveries().get(1).getId().equals("9405903699300372857186"));
+		Assert.assertTrue(find.getDeliveries().get(1).getCarrier().equals(Carrier.USPS));
+		Assert.assertEquals(find.getDeliveries().get(1).getThreshold(), uspsThreshold.intValue());
 
 		accountOrderService.deleteAccount(account.getId());
 
@@ -277,30 +273,30 @@ public class OrderServiceTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		List<Order> list = new LinkedList<Order>();
-		Order o = new Order();
+		List<Delivery> list = new LinkedList<Delivery>();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 		list.add(o);
 
-		o = new Order();
+		o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300372857186");
 		list.add(o);
 
-		accountOrderService.createOrders(account.getId(), list);
+		accountOrderService.createDeliveries(account.getId(), list);
 
-		List<Order> orders = accountOrderService.findOrders(account.getId());
-		Assert.assertNotNull(orders);
-		Assert.assertTrue(orders.size() == 2);
+		List<Delivery> deliveries = accountOrderService.findDeliveries(account.getId());
+		Assert.assertNotNull(deliveries);
+		Assert.assertTrue(deliveries.size() == 2);
 
-		Assert.assertTrue(orders.get(0).getId().equals("9405903699300380069915"));
-		Assert.assertTrue(orders.get(0).getCarrier().equals(Carrier.USPS));
-		Assert.assertEquals(orders.get(0).getThreshold(), uspsThreshold.intValue());
+		Assert.assertTrue(deliveries.get(0).getId().equals("9405903699300380069915"));
+		Assert.assertTrue(deliveries.get(0).getCarrier().equals(Carrier.USPS));
+		Assert.assertEquals(deliveries.get(0).getThreshold(), uspsThreshold.intValue());
 
-		Assert.assertTrue(orders.get(1).getId().equals("9405903699300372857186"));
-		Assert.assertTrue(orders.get(1).getCarrier().equals(Carrier.USPS));
-		Assert.assertEquals(orders.get(1).getThreshold(), uspsThreshold.intValue());
+		Assert.assertTrue(deliveries.get(1).getId().equals("9405903699300372857186"));
+		Assert.assertTrue(deliveries.get(1).getCarrier().equals(Carrier.USPS));
+		Assert.assertEquals(deliveries.get(1).getThreshold(), uspsThreshold.intValue());
 
 		accountOrderService.deleteAccount(account.getId());
 

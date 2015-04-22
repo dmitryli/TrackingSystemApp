@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.dimalimonov.tracking.service.AccountOrderService;
+import com.dimalimonov.tracking.service.AccountDeliveriesService;
 import com.dimalimonov.tracking.service.EmailService;
 
 @Service
@@ -23,7 +23,7 @@ public class SchedulingServiceImpl {
 	private boolean schedulerOn = true;
 
 	@Autowired
-	private AccountOrderService accountService = null;
+	private AccountDeliveriesService accountService = null;
 
 	@Autowired
 	private EmailService emailService = null;

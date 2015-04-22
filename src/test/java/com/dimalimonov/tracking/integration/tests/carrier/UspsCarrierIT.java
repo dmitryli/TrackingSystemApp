@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import com.dimalimonov.tracking.service.CarrierService;
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("production")
+
 public class UspsCarrierIT {
 
 	private static final Logger logger = LoggerFactory.getLogger(UspsCarrierIT.class);
@@ -44,7 +46,7 @@ public class UspsCarrierIT {
 	
 		for (String s : lines) {
 			List<Activity> activityList = upsService.getActivityList(s);
-			logger.info("order {}", s);
+			logger.info("deliveries {}", s);
 			Assert.assertNotNull(activityList);
 			logger.info("status {}",  activityList.get(0).getStatusDescription());
 		}

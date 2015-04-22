@@ -42,7 +42,7 @@ public class UspsServiceImpl implements CarrierService {
 
 			Activity status = new Activity();
 			Element statusAct = (Element) document.selectSingleNode("/TrackResponse/TrackInfo/TrackSummary");
-			// can happen if the order number is duplicated and more details are
+			// can happen if the delivery number is duplicated and more details are
 			// required
 			if (statusAct == null) {
 				statusAct = (Element) document.selectSingleNode("/TrackResponse/TrackInfo/Error/Description");

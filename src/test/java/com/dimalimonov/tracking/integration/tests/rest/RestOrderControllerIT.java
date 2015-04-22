@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -25,16 +24,16 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
-import com.dimalimonov.tracking.domain.Activity;
 import com.dimalimonov.tracking.domain.Carrier;
-import com.dimalimonov.tracking.domain.Order;
-import com.dimalimonov.tracking.domain.OrderCollection;
+import com.dimalimonov.tracking.domain.DeliveriesCollection;
+import com.dimalimonov.tracking.domain.Delivery;
 import com.dimalimonov.tracking.util.Constants;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("production")
+
 public class RestOrderControllerIT {
 
 	private static final Logger logger = LoggerFactory.getLogger(RestOrderControllerIT.class);
@@ -54,27 +53,27 @@ public class RestOrderControllerIT {
 		Assert.assertNotNull(response.getHeaders().getLocation());
 		String uri = response.getHeaders().getLocation().toString();
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 		o.setDescription("My favorite Order");
 
-		OrderCollection collection = new OrderCollection();
-		collection.setOrders(Collections.singletonList(o));
+		DeliveriesCollection collection = new DeliveriesCollection();
+		collection.setDeliveries(Collections.singletonList(o));
 
-		String ordersUri = uri + "/orders";
+		String deliveriesUri = uri + "/deliveries";
 
-		ResponseEntity<List> ordersResponse = template.postForEntity(ordersUri, collection, List.class);
+		ResponseEntity<List> deliveriesResponse = template.postForEntity(deliveriesUri, collection, List.class);
 		Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-		List<Map<String, String>> orders = (List<Map<String, String>>) ordersResponse.getBody();
-		Map<String, String> order = orders.get(0);
+		List<Map<String, String>> deliveries = (List<Map<String, String>>) deliveriesResponse.getBody();
+		Map<String, String> delivery = deliveries.get(0);
 
 		logger.info("location {}", response.getHeaders().getLocation());
 
-		Assert.assertEquals("9405903699300380069915", order.get("id"));
-		Assert.assertEquals("USPS", order.get("carrier"));
-		Assert.assertEquals("My favorite Order", order.get("description"));
+		Assert.assertEquals("9405903699300380069915", delivery.get("id"));
+		Assert.assertEquals("USPS", delivery.get("carrier"));
+		Assert.assertEquals("My favorite Order", delivery.get("description"));
 
 		// Delete account
 		template.delete(uri);
@@ -91,17 +90,17 @@ public class RestOrderControllerIT {
 		Assert.assertNotNull(response.getHeaders().getLocation());
 		String accountUri = response.getHeaders().getLocation().toString();
 
-		String ordersUri = accountUri + "/orders";
+		String deliveryUri = accountUri + "/deliveries";
 
 		File file = uspsNumbers.getFile();
 		List<String> lines = FileUtils.readLines(file);
 
 		for (String s : lines) {
-			Order o = new Order();
+			Delivery o = new Delivery();
 			o.setId(s);
-			OrderCollection collection = new OrderCollection();
-			collection.setOrders(Collections.singletonList(o));
-			ResponseEntity<List> ordersResponse = template.postForEntity(ordersUri, collection, List.class);
+			DeliveriesCollection collection = new DeliveriesCollection();
+			collection.setDeliveries(Collections.singletonList(o));
+			ResponseEntity<List> deliveryResponse = template.postForEntity(deliveryUri, collection, List.class);
 			Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 		}
 

@@ -6,7 +6,7 @@ import java.util.List;
 public class Account {
 
 	private String id = null;
-	private List<Order> orders = new ArrayList<Order>();
+	private List<Delivery> deliveries = new ArrayList<Delivery>();
 
 	public String getId() {
 		return id;
@@ -16,16 +16,12 @@ public class Account {
 		this.id = id;
 	}
 
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
+	public void addDelivery(Delivery o) {
+		deliveries.add(o);
 	}
 
-	public List<Order> getOrders() {
-		return orders;
+	public List<Delivery> getDeliveries() {
+		return deliveries;
 	}
-
-	public void addOrder(Order o) {
-		orders.add(o);
-	}
-
+		
 }

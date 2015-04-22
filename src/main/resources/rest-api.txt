@@ -11,14 +11,14 @@ returns link to the account created for you:
 for example: http://localhost:8080/tracking/accounts/552ac0cf15444f90bac76d73
 
 ------------------------------------------------
-Find customer by email
-GET http://localhost:8080/tracking/customers?email=<EMAIL>
+Find users by email
+GET http://localhost:8080/tracking/users?email=<EMAIL>
 ------------------------------------------------
-Find customer by id
-GET http://localhost:8080/tracking/customers/{id}
+Find user by id
+GET http://localhost:8080/tracking/users/{id}
 ------------------------------------------------
-Update Customer: (Id, Role and AccountId will be ignored on update from REST API)
-POST localhost:8080/tracking/customers/5531e3db415d1a482a2d7f19
+Update user: (Id, Role and AccountId will be ignored on update from REST API)
+POST localhost:8080/tracking/users/5531e3db415d1a482a2d7f19
 {
 	"id": "aaaaa",
 	"displayName": "aaaaa",
@@ -53,11 +53,11 @@ POST http://localhost:8080/accounts/{id}/orders
  }]
 }
 ------------------------------------------------
-Create Orders (supports many as well)
+Create Deliveries (supports many as well)
 
-POST http://localhost:8080/accounts/{id}/orders
+POST http://localhost:8080/accounts/{id}/deliveries
 {
- "orders" : [
+ "deliveries" : [
  {
 	"id": "9405903699300330546275"
  },
@@ -66,44 +66,44 @@ POST http://localhost:8080/accounts/{id}/orders
  }]
 }
 ------------------------------------------------
-View orders
-GET http://localhost:8080/accounts/{id}/orders
+View Deliveries
+GET http://localhost:8080/accounts/{id}/deliveries
 ------------------------------------------------
-View order
-GET http://localhost:8080/accounts/{id}/orders/{orderId}
+View Delivery
+GET http://localhost:8080/accounts/{id}/deliveries/{orderId}
 ------------------------------------------------
-Mute Order
-POST http://localhost:8080/accounts/{id}/orders/{orderId}/mute
+Mute Delivery
+POST http://localhost:8080/accounts/{id}/deliveries/{orderId}/mute
 {
 	"muteNotifications": true
 }
 ------------------------------------------------
-Unmute Order
-POST http://localhost:8080/accounts/{id}/orders/{orderId}/mute
+Unmute Delivery
+POST http://localhost:8080/accounts/{id}/deliveries/{orderId}/mute
 {
 	"muteNotifications": false
 }
 ------------------------------------------------
 Change threshold
-POST http://localhost:8080/accounts/{id}/orders/{orderId}/threshold
+POST http://localhost:8080/accounts/{id}/deliveries/{orderId}/threshold
 {
 	"threshold": 1000
 }
 ------------------------------------------------
 Change state to archive
-POST http://localhost:8080/accounts/{id}/orders/{orderId}/state
+POST http://localhost:8080/accounts/{id}/deliveries/{orderId}/state
 {
 	"state": "ARCHIVED"
 }
 ------------------------------------------------
 Change state to active
-POST http://localhost:8080/accounts/{id}/orders/{orderId}/state
+POST http://localhost:8080/accounts/{id}/deliveries/{orderId}/state
 {
 	"state": "ACTIVE"
 }
 ------------------------------------------------
 Change description
-POST http://localhost:8080/accounts/{id}/orders/{orderId}/description
+POST http://localhost:8080/accounts/{id}/deliveries/{orderId}/description
 {
 	"description": "some dummy"
 }

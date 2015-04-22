@@ -46,35 +46,35 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
-	public void sendNotificationEmail(String email, String displayName, String orderId, String status) {
+	public void sendNotificationEmail(String email, String displayName, String deliveryId, String status) {
 		String subject = emailMessages.getMessage("notification.email.subject", null, Locale.US);
 		String text = emailMessages.getMessage("notification.email.text",
-				new Object[] { displayName, orderId, status }, locale);
+				new Object[] { displayName, deliveryId, status }, locale);
 		sendEmail(email, subject, text);
 
 	}
 
 	@Override
-	public void sendNewOrderEmail(String email, String displayName, String orderId, String status) {
+	public void sendNewOrderEmail(String email, String displayName, String deliveryId, String status) {
 		String subject = emailMessages.getMessage("newpackage.email.subject", null, Locale.US);
-		String text = emailMessages.getMessage("newpackage.email.text", new Object[] { displayName, orderId, status },
+		String text = emailMessages.getMessage("newpackage.email.text", new Object[] { displayName, deliveryId, status },
 				locale);
 		sendEmail(email, subject, text);
 	}
 
 	@Override
-	public void sendThresholdExceededEmail(String email, String displayName, String orderId, String status) {
+	public void sendThresholdExceededEmail(String email, String displayName, String deliveryId, String status) {
 		String subject = emailMessages.getMessage("threshold.email.subject", null, Locale.US);
-		String text = emailMessages.getMessage("threshold.email.text", new Object[] { displayName, orderId, status },
+		String text = emailMessages.getMessage("threshold.email.text", new Object[] { displayName, deliveryId, status },
 				locale);
 		sendEmail(email, subject, text);
 
 	}
 
 	@Override
-	public void sendThresholdExceededEmail(String email, String displayName, String[] orderId, String status) {
+	public void sendThresholdExceededEmail(String email, String displayName, String[] deliveryId, String status) {
 		String subject = emailMessages.getMessage("threshold.email.subject", null, Locale.US);
-		String text = emailMessages.getMessage("threshold.email.text", new Object[] { displayName, orderId, status },
+		String text = emailMessages.getMessage("threshold.email.text", new Object[] { displayName, deliveryId, status },
 				locale);
 		sendEmail(email, subject, text);
 

@@ -15,7 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
-import com.dimalimonov.tracking.service.AccountOrderService;
+import com.dimalimonov.tracking.service.AccountDeliveriesService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
@@ -26,7 +26,7 @@ public class AccountOrderServiceTest {
 	private static final Logger logger = LoggerFactory.getLogger(AccountOrderServiceTest.class);
 
 	@Autowired
-	private AccountOrderService accountOrderService = null;
+	private AccountDeliveriesService accountOrderService = null;
 
 	@Test
 	public void createAccount() {

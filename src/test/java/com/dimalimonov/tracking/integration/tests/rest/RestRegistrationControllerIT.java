@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
-import com.dimalimonov.tracking.domain.Customer;
+import com.dimalimonov.tracking.domain.User;
 import com.dimalimonov.tracking.domain.Link;
 import com.dimalimonov.tracking.util.Constants;
 
@@ -27,6 +28,7 @@ import com.dimalimonov.tracking.util.Constants;
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("production")
+
 public class RestRegistrationControllerIT {
 
 	private static final Logger logger = LoggerFactory.getLogger(RestRegistrationControllerIT.class);
@@ -35,7 +37,7 @@ public class RestRegistrationControllerIT {
 
 	@Test
 	public void testRegisterNewMinimalCustomer() throws Exception {
-		Customer c = new Customer();
+		User c = new User();
 		c.setDisplayName("My Test Customer");
 		c.setEmail("dmitryli@outlook.com");
 		c.setPassword("integration");
@@ -52,16 +54,16 @@ public class RestRegistrationControllerIT {
 		Assert.assertNotNull(accountEntity.getBody());
 		Assert.assertEquals(HttpStatus.OK, accountEntity.getStatusCode());
 
-		Map<String, String> customerMap = list.get(1);
-		String customerLink = customerMap.get("href");
-		logger.info("customer {}", customerLink);
-		ResponseEntity<Customer> customerEntity = template.getForEntity(customerLink, Customer.class);
-		Assert.assertNotNull(customerEntity.getBody());
-		Assert.assertEquals(HttpStatus.OK, customerEntity.getStatusCode());
+		Map<String, String> usersMap = list.get(1);
+		String userLink = usersMap.get("href");
+		logger.info("user {}", userLink);
+		ResponseEntity<User> userEntity = template.getForEntity(userLink, User.class);
+		Assert.assertNotNull(userEntity.getBody());
+		Assert.assertEquals(HttpStatus.OK, userEntity.getStatusCode());
 
-		// Delete account and customer
+		// Delete account and user
 		template.delete(accountLink);
-		template.delete(customerLink);
+		template.delete(userLink);
 
 	}
 

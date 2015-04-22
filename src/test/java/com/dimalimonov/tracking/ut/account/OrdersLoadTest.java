@@ -22,8 +22,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.Carrier;
-import com.dimalimonov.tracking.domain.Order;
-import com.dimalimonov.tracking.service.AccountOrderService;
+import com.dimalimonov.tracking.domain.Delivery;
+import com.dimalimonov.tracking.service.AccountDeliveriesService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
@@ -37,7 +37,7 @@ public class OrdersLoadTest {
 	private Resource uspsNumbers = null;
 
 	@Autowired
-	private AccountOrderService accountOrderService = null;
+	private AccountDeliveriesService accountOrderService = null;
 
 	@Test
 	public void loadMulipleOrdersToAccount() {
@@ -49,10 +49,10 @@ public class OrdersLoadTest {
 			Assert.assertNotNull(lines);
 			Assert.assertEquals(lines.size(), 52);
 
-			List<Order> list = new LinkedList<Order>();
+			List<Delivery> list = new LinkedList<Delivery>();
 
 			for (String s : lines) {
-				Order o = new Order();
+				Delivery o = new Delivery();
 				o.setCarrier(Carrier.USPS);
 				o.setId(s);
 				list.add(o);
@@ -62,9 +62,9 @@ public class OrdersLoadTest {
 			account = accountOrderService.createAccount(account);
 			Assert.assertNotNull(account.getId());
 
-			accountOrderService.createOrders(account.getId(), list);
+			accountOrderService.createDeliveries(account.getId(), list);
 
-			Assert.assertEquals(accountOrderService.findAccount(account.getId()).getOrders().size(), lines.size());
+			Assert.assertEquals(accountOrderService.findAccount(account.getId()).getDeliveries().size(), lines.size());
 
 			accountOrderService.deleteAccount(account.getId());
 		} catch (IOException e) {

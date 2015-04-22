@@ -5,7 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Customer {
+import com.dimalimonov.tracking.util.Constants;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({ "id", "displayName", "email", "password", "phoneNumber", "emailWhenNewOrderAdded",
+		"emailWhenOrderStateChanges", "emailWhenThresholdExceeded", "emailNotificationTime", "defaultThreshold",
+		"accountId", "accountLink" })
+@JsonIgnoreProperties("role")
+@JsonInclude(Include.NON_EMPTY)
+public class User {
 	private String id = null;
 	private String displayName = null;
 	private String email = null;
@@ -60,6 +71,7 @@ public class Customer {
 		this.password = password;
 	}
 
+	
 	public String getRole() {
 		return role;
 	}
@@ -120,7 +132,14 @@ public class Customer {
 		this.emailNotificationTime = emailNotificationTime;
 	}
 
-	
-	
+	public Link getAccountLink() {
+		Link l = null;
+		if (getAccountId() != null) {
+			l = new Link();
+			l.setRel("account");
+			l.setHref(String.format(Constants.ACCOUNT_URI, getAccountId()));
+		}
+		return l;
+	}
 
 }

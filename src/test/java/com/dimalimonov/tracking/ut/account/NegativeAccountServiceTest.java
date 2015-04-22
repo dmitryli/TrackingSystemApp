@@ -13,7 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
-import com.dimalimonov.tracking.service.AccountOrderService;
+import com.dimalimonov.tracking.service.AccountDeliveriesService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
@@ -24,7 +24,7 @@ public class NegativeAccountServiceTest {
 	private static final Logger logger = LoggerFactory.getLogger(NegativeAccountServiceTest.class);
 
 	@Autowired
-	private AccountOrderService accountService = null;
+	private AccountDeliveriesService accountService = null;
 
 	@Test
 	public void findIllegalAccount() {

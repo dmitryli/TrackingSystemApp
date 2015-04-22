@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dimalimonov.tracking.domain.Account;
-import com.dimalimonov.tracking.service.AccountOrderService;
+import com.dimalimonov.tracking.service.AccountDeliveriesService;
 import com.dimalimonov.tracking.util.Constants;
 
 @RestController
@@ -25,7 +25,7 @@ public class RestAccountController {
 	private static final Logger logger = LoggerFactory.getLogger(RestAccountController.class);
 
 	@Autowired
-	private AccountOrderService accountService = null;
+	private AccountDeliveriesService accountService = null;
 
 	@RequestMapping(value = "/accounts", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<Account> createAccount(@RequestBody Account account) {

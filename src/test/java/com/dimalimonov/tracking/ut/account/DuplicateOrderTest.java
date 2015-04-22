@@ -15,9 +15,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.Carrier;
-import com.dimalimonov.tracking.domain.Order;
-import com.dimalimonov.tracking.errors.DuplicateOrderException;
-import com.dimalimonov.tracking.service.AccountOrderService;
+import com.dimalimonov.tracking.domain.Delivery;
+import com.dimalimonov.tracking.errors.DuplicateDeliveryException;
+import com.dimalimonov.tracking.service.AccountDeliveriesService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
@@ -33,7 +33,7 @@ public class DuplicateOrderTest {
 	public Integer upsThreshold = null;
 
 	@Autowired
-	private AccountOrderService accountOrderService = null;
+	private AccountDeliveriesService accountOrderService = null;
 
 	@Test
 	public void createDuplicateOrder() {
@@ -41,20 +41,20 @@ public class DuplicateOrderTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		o = new Order();
+		o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
 		try {
-			Order duplicateOrder = accountOrderService.createOrder(account.getId(), o);
+			Delivery duplicateOrder = accountOrderService.createDelivery(account.getId(), o);
 			Assert.assertNull(duplicateOrder);
-		} catch (DuplicateOrderException e) {
+		} catch (DuplicateDeliveryException e) {
 			logger.error(e.getMessage());
 			Assert.assertEquals("PACK_ERR_0004: Package with id 9405903699300380069915 already exists in this account",
 					e.getMessage());
@@ -70,32 +70,32 @@ public class DuplicateOrderTest {
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
 
-		Order o = new Order();
+		Delivery o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		o = new Order();
+		o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300367183443");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		o = new Order();
+		o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300368436531");
 
-		accountOrderService.createOrder(account.getId(), o);
+		accountOrderService.createDelivery(account.getId(), o);
 
-		o = new Order();
+		o = new Delivery();
 		o.setCarrier(Carrier.USPS);
 		o.setId("9405903699300380069915");
 
 		try {
-			Order duplicateOrder = accountOrderService.createOrder(account.getId(), o);
+			Delivery duplicateOrder = accountOrderService.createDelivery(account.getId(), o);
 			Assert.assertNull(duplicateOrder);
-		} catch (DuplicateOrderException e) {
+		} catch (DuplicateDeliveryException e) {
 			logger.error(e.getMessage());
 			Assert.assertEquals("PACK_ERR_0004: Package with id 9405903699300380069915 already exists in this account",
 					e.getMessage());

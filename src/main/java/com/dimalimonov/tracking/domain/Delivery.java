@@ -2,7 +2,7 @@ package com.dimalimonov.tracking.domain;
 
 import java.util.List;
 
-public class Order {
+public class Delivery {
 
 	private String id = null;
 	private Carrier carrier = null;
@@ -12,9 +12,9 @@ public class Order {
 	private int threshold = 0;
 	private boolean muteNotifications = false;
 	private long whenNotificationShouldBeSent = 0;
-	private OrderState state = null;
-//	private OrderStatus shippingStatus = null;
-	private OrderDeliveryStatus orderDeliveryStatus = null;
+	private DeliveryState state = null;
+	private boolean isOverDue = false;
+	private DeliveryStatus deliveryStatus = null;
 	private List<Activity> activities = null;
 
 	public String getDateTime() {
@@ -41,21 +41,21 @@ public class Order {
 		this.whenNotificationShouldBeSent = whenNotificationShouldBeSent;
 	}
 
-	public OrderState getState() {
+	public DeliveryState getState() {
 		return state;
 	}
 
-	public void setState(OrderState state) {
+	public void setState(DeliveryState state) {
 		this.state = state;
 	}
 
 
-	public OrderDeliveryStatus getOrderDeliveryStatus() {
-		return orderDeliveryStatus;
+	public DeliveryStatus getDeliveryStatus() {
+		return deliveryStatus;
 	}
 
-	public void setOrderDeliveryStatus(OrderDeliveryStatus orderDeliveryStatus) {
-		this.orderDeliveryStatus = orderDeliveryStatus;
+	public void setDeliveryStatus(DeliveryStatus deliveryStatus) {
+		this.deliveryStatus = deliveryStatus;
 	}
 
 	public List<Activity> getActivities() {
@@ -67,15 +67,10 @@ public class Order {
 		if (this.activities!=null && this.activities.size() > 0) {
 			Activity lastActivity = activities.get(0);
 			if (lastActivity.getStatusDescription().contains("was delivered")) {
-				setOrderDeliveryStatus(OrderDeliveryStatus.DELIVERED);
-			} else if (lastActivity.getStatusDescription().contains("Out for Delivery") || lastActivity.getStatusDescription().contains("Sorting") || 
-					lastActivity.getStatusDescription().contains("Accepted") || lastActivity.getStatusDescription().contains("Arrived") || lastActivity.getStatusDescription().contains("Departed")) {
-				setOrderDeliveryStatus(OrderDeliveryStatus.SHIPPED);
-			}  else if (lastActivity.getStatusDescription().contains("Pre-Shipment")){
-				setOrderDeliveryStatus(OrderDeliveryStatus.PRESHIPPED);
-			}  else if (lastActivity.getStatusDescription().contains("Duplicate")){
-				setOrderDeliveryStatus(OrderDeliveryStatus.DUPLICATE);
-			}
+				setDeliveryStatus(DeliveryStatus.DELIVERED);
+			} else {
+				setDeliveryStatus(DeliveryStatus.INTRANSIT);
+			}  
 		}
 	}
 
@@ -125,6 +120,14 @@ public class Order {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public boolean isOverDue() {
+		return isOverDue;
+	}
+
+	public void setOverDue(boolean isOverDue) {
+		this.isOverDue = isOverDue;
 	}
 	
 

@@ -1,6 +1,7 @@
 package com.dimalimonov.tracking.integration.tests.rest;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import com.dimalimonov.tracking.util.Constants;
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("production")
+
 public class RestAccountControllerIT {
 
 	private static final Logger logger = LoggerFactory.getLogger(RestAccountControllerIT.class);

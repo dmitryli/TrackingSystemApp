@@ -1,5 +1,5 @@
 package com.dimalimonov.tracking.domain;
 
-public enum OrderState {
+public enum DeliveryState {
 	ACTIVE, ARCHIVED
 }

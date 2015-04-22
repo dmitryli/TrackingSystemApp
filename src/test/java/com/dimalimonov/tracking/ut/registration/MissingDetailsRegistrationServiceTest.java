@@ -12,10 +12,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.dimalimonov.tracking.TrackingSystemApplication;
-import com.dimalimonov.tracking.domain.Customer;
+import com.dimalimonov.tracking.domain.User;
 import com.dimalimonov.tracking.domain.RegistrationResult;
-import com.dimalimonov.tracking.errors.MissingCustomerDetailsException;
-import com.dimalimonov.tracking.service.CustomerService;
+import com.dimalimonov.tracking.errors.MissingUserDetailsException;
+import com.dimalimonov.tracking.service.UserService;
 import com.dimalimonov.tracking.service.RegistrationService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,18 +30,18 @@ public class MissingDetailsRegistrationServiceTest {
 	private RegistrationService registrationService = null;
 
 	@Autowired
-	private CustomerService customerService = null;
+	private UserService userService = null;
 
 	@Test
 	public void registerCustomer() {
-		Customer customer = new Customer();
-		customer.setDisplayName("test");
-		customer.setEmail("test@test.com");
+		User user = new User();
+		user.setDisplayName("test");
+		user.setEmail("test@test.com");
 		RegistrationResult register = null;
 		try {
-			register = registrationService.register(customer);
+			register = registrationService.register(user);
 			Assert.assertNull(register);
-		} catch (MissingCustomerDetailsException e) {
+		} catch (MissingUserDetailsException e) {
 			logger.error(e.getMessage());
 			Assert.assertNull(register);
 			Assert.assertEquals("CUST_ERR_0002: Missing field(s) are: Password", e.getMessage());

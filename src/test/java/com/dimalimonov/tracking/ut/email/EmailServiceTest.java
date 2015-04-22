@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.dimalimonov.tracking.TrackingSystemApplication;
-import com.dimalimonov.tracking.domain.Customer;
+import com.dimalimonov.tracking.domain.User;
 import com.dimalimonov.tracking.service.EmailService;
 
 @RunWith(SpringJUnit4ClassRunner.class)

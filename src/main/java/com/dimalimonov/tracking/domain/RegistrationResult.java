@@ -3,7 +3,7 @@ package com.dimalimonov.tracking.domain;
 public class RegistrationResult {
 
 	private Account account = null;
-	private Customer customer = null;
+	private User user = null;
 
 	public Account getAccount() {
 		return account;
@@ -13,12 +13,12 @@ public class RegistrationResult {
 		this.account = account;
 	}
 
-	public Customer getCustomer() {
-		return customer;
+	public User getUser() {
+		return user;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }
