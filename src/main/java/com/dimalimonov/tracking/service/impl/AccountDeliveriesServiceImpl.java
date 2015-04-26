@@ -117,6 +117,21 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 	}
 
 	@Override
+	public List<Delivery> findDeliveriesByState(String accountId, DeliveryState state) {
+		List<Delivery> resultList = new ArrayList<Delivery>();
+		
+		List<Delivery> deliveries = findDeliveries(accountId);
+		
+		for (Delivery d : deliveries) {
+			if (d.getState().equals(state)) {
+				resultList.add(d);
+			}
+		}
+		
+		return resultList;
+	}
+	
+	@Override
 	public List<Delivery> findDeliveries(String accountId) {
 		List<Delivery> deliveries = null;
 		Account account = findAccount(accountId);
@@ -126,13 +141,14 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 		return deliveries;
 
 	}
+	
 
 	@Override
 	public Delivery findDelivery(String accountId, String deliveryId) {
-		return findOrder(findAccount(accountId), deliveryId);
+		return findDelivery(findAccount(accountId), deliveryId);
 	}
 
-	private Delivery findOrder(Account account, String deliveryId) {
+	private Delivery findDelivery(Account account, String deliveryId) {
 		Delivery delivery = null;
 		if (account != null) {
 			List<Delivery> deliveries = account.getDeliveries();
@@ -150,21 +166,9 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 	}
 
 	@Override
-	public Delivery archiveDelivery(String accountId, Delivery delivery) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Delivery activateDelivery(String accountId, Delivery delivery) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Delivery muteNotifications(String accountId, Delivery delivery) {
 		Account a = findAccount(accountId);
-		Delivery o = findOrder(a, delivery.getId());
+		Delivery o = findDelivery(a, delivery.getId());
 		if (o != null) {
 			o.setMuteNotifications(delivery.isMuteNotifications());
 		}
@@ -176,7 +180,7 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 	@Override
 	public Delivery updateTreshold(String accountId, Delivery delivery) {
 		Account a = findAccount(accountId);
-		Delivery o = findOrder(a, delivery.getId());
+		Delivery o = findDelivery(a, delivery.getId());
 		if (o != null) {
 			o.setThreshold(delivery.getThreshold());
 		}
@@ -188,7 +192,7 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 	@Override
 	public Delivery changeState(String accountId, Delivery delivery) {
 		Account a = findAccount(accountId);
-		Delivery o = findOrder(a, delivery.getId());
+		Delivery o = findDelivery(a, delivery.getId());
 		if (o != null) {
 			o.setState(delivery.getState());
 		}
@@ -200,7 +204,7 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 	@Override
 	public Delivery updateDescription(String accountId, Delivery delivery) {
 		Account a = findAccount(accountId);
-		Delivery o = findOrder(a, delivery.getId());
+		Delivery o = findDelivery(a, delivery.getId());
 		if (o != null) {
 			o.setDescription(delivery.getDescription());
 		}
@@ -265,5 +269,7 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 		return delivery;
 
 	}
+
+	
 
 }

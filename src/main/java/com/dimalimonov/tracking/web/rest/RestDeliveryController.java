@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dimalimonov.tracking.domain.Delivery;
 import com.dimalimonov.tracking.domain.DeliveriesCollection;
+import com.dimalimonov.tracking.domain.DeliveryState;
 import com.dimalimonov.tracking.errors.DuplicateDeliveryException;
 import com.dimalimonov.tracking.errors.RestError;
 import com.dimalimonov.tracking.service.AccountDeliveriesService;
@@ -34,7 +35,7 @@ public class RestDeliveryController {
 	private AccountDeliveriesService accountService = null;
 
 	@RequestMapping(value = "/accounts/{id}/deliveries", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<List<Delivery>> addOrders(@PathVariable("id") String accountId,
+	public ResponseEntity<List<Delivery>> addDeliveries(@PathVariable("id") String accountId,
 			@RequestBody DeliveriesCollection deliveriesCollection) {
 		logger.info("creating new deliveries for account {}", accountId);
 		List<Delivery> list = accountService.createDeliveries(accountId, deliveriesCollection.getDeliveries());
@@ -47,19 +48,34 @@ public class RestDeliveryController {
 	}
 
 	@RequestMapping(value = "/accounts/{id}/deliveries", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public List<Delivery> getOrders(@PathVariable("id") String accountId) {
+	public List<Delivery> getDeliveries(@PathVariable("id") String accountId) {
 		logger.info("find deliveries for account {}", accountId);
 		return accountService.findDeliveries(accountId);
 	}
+	
+	
+	@RequestMapping(value = "/accounts/{id}/deliveries", method = RequestMethod.GET,params="active", produces = { MediaType.APPLICATION_JSON_VALUE })
+	public List<Delivery> getActiveDeliveries(@PathVariable("id") String accountId) {
+		logger.info("find active deliveries for account {}", accountId);
+		return accountService.findDeliveriesByState(accountId, DeliveryState.ACTIVE);
+	}
 
+
+	@RequestMapping(value = "/accounts/{id}/deliveries", method = RequestMethod.GET,params="archived", produces = { MediaType.APPLICATION_JSON_VALUE })
+	public List<Delivery> getArchivedDeliveries(@PathVariable("id") String accountId) {
+		logger.info("find archived deliveries for account {}", accountId);
+		return accountService.findDeliveriesByState(accountId, DeliveryState.ARCHIVED);
+	}
+
+	
 	@RequestMapping(value = "/accounts/{id}/deliveries/{deliveryId}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public Delivery getOrderById(@PathVariable("id") String accountId, @PathVariable("deliveryId") String deliveryId) {
+	public Delivery getDeliveryById(@PathVariable("id") String accountId, @PathVariable("deliveryId") String deliveryId) {
 		logger.info("find delivery {} for account {}", deliveryId, accountId);
 		return accountService.findDelivery(accountId, deliveryId);
 	}
 
 	@RequestMapping(value = "/accounts/{id}/deliveries/{deliveryId}/mute", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public void muteOrder(@PathVariable("id") String accountId, @PathVariable("deliveryId") String deliveryId,
+	public void muteDelivery(@PathVariable("id") String accountId, @PathVariable("deliveryId") String deliveryId,
 			@RequestBody Delivery delivery) {
 		logger.info("mute delivery {} on account {}", deliveryId, accountId);
 		delivery.setId(deliveryId);

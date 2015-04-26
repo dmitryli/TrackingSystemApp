@@ -26,9 +26,9 @@ import com.dimalimonov.tracking.service.AccountDeliveriesService;
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class OrderServiceTest {
+public class DeliveriesTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(OrderServiceTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(DeliveriesTest.class);
 	@Value("${usps.threshold}")
 	public Integer uspsThreshold = null;
 
@@ -39,7 +39,7 @@ public class OrderServiceTest {
 	private AccountDeliveriesService accountOrderService = null;
 
 	@Test
-	public void createOneOrder() {
+	public void createOneDelivery() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -69,7 +69,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	public void archiveOrder() {
+	public void archiveDelivery() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -94,7 +94,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	public void activateOrder() {
+	public void activateDelivery() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -128,7 +128,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	public void updateOrderThreshold() {
+	public void updateDeliveryThreshold() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -153,7 +153,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	public void muteOrder() {
+	public void muteDelivery() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -178,7 +178,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	public void muteUnmuteOrder() {
+	public void muteUnmuteDelivery() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -210,7 +210,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	public void findOrder() {
+	public void findDelivery() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -232,7 +232,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	public void createMultipleOrders() {
+	public void createMultipleDeliveries() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -268,7 +268,7 @@ public class OrderServiceTest {
 	}
 
 	@Test
-	public void findOrders() {
+	public void findDeliveries() {
 		Account account = new Account();
 		account = accountOrderService.createAccount(account);
 		Assert.assertNotNull(account.getId());
@@ -297,6 +297,41 @@ public class OrderServiceTest {
 		Assert.assertTrue(deliveries.get(1).getId().equals("9405903699300372857186"));
 		Assert.assertTrue(deliveries.get(1).getCarrier().equals(Carrier.USPS));
 		Assert.assertEquals(deliveries.get(1).getThreshold(), uspsThreshold.intValue());
+
+		accountOrderService.deleteAccount(account.getId());
+
+	}
+	
+	@Test
+	public void findActiveDeliveries() {
+		Account account = new Account();
+		account = accountOrderService.createAccount(account);
+		Assert.assertNotNull(account.getId());
+
+		List<Delivery> list = new LinkedList<Delivery>();
+		Delivery o = new Delivery();
+		o.setCarrier(Carrier.USPS);
+		o.setId("9405903699300380069915");
+		list.add(o);
+
+		o = new Delivery();
+		o.setCarrier(Carrier.USPS);
+		o.setId("9405903699300372857186");
+		list.add(o);
+
+		accountOrderService.createDeliveries(account.getId(), list);
+		
+		o.setState(DeliveryState.ARCHIVED);
+		accountOrderService.changeState(account.getId(), o);
+
+		List<Delivery> deliveries = accountOrderService.findDeliveriesByState(account.getId(), DeliveryState.ACTIVE);
+		Assert.assertNotNull(deliveries);
+		Assert.assertTrue(deliveries.size() == 1 );
+		
+		List<Delivery> deliveries2 = accountOrderService.findDeliveriesByState(account.getId(), DeliveryState.ARCHIVED);
+		Assert.assertNotNull(deliveries2);
+		Assert.assertTrue(deliveries2.size() == 1 );
+
 
 		accountOrderService.deleteAccount(account.getId());
 

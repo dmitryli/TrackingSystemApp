@@ -26,8 +26,8 @@ import com.dimalimonov.tracking.service.CarrierService;
 
 @Service("accountOrderService")
 @Profile("test")
-public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesService {
-	private static final Logger logger = LoggerFactory.getLogger(TestAccountDeliveriesServiceImpl.class);
+public class DeliveriesMockup implements AccountDeliveriesService {
+	private static final Logger logger = LoggerFactory.getLogger(DeliveriesMockup.class);
 	private static final String COLLECTION_NAME = "ptrackaccounts";
 
 	private final static String UPS_PREFIX = "1Z";
@@ -100,7 +100,8 @@ public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesServic
 		if (deliveries != null) {
 			for (Delivery o : deliveries) {
 				o = generateDefaultOrderInformation(o);
-				logger.info("Adding deliveries {} to account {}", o.getId(), account.getId());
+//				o = setCarrierStatusUpdates(o);
+				logger.info("Adding delivery {} to account {}", o.getId(), account.getId());
 				account.addDelivery(o);
 
 			}
@@ -112,10 +113,25 @@ public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesServic
 	}
 
 	@Override
-	public Delivery createDelivery(String accountId, Delivery deliveries) {
-		return createDeliveries(accountId, Collections.singletonList(deliveries)).get(0);
+	public Delivery createDelivery(String accountId, Delivery delivery) {
+		return createDeliveries(accountId, Collections.singletonList(delivery)).get(0);
 	}
 
+	@Override
+	public List<Delivery> findDeliveriesByState(String accountId, DeliveryState state) {
+		List<Delivery> resultList = new ArrayList<Delivery>();
+		
+		List<Delivery> deliveries = findDeliveries(accountId);
+		
+		for (Delivery d : deliveries) {
+			if (d.getState().equals(state)) {
+				resultList.add(d);
+			}
+		}
+		
+		return resultList;
+	}
+	
 	@Override
 	public List<Delivery> findDeliveries(String accountId) {
 		List<Delivery> deliveries = null;
@@ -126,13 +142,14 @@ public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesServic
 		return deliveries;
 
 	}
+	
 
 	@Override
 	public Delivery findDelivery(String accountId, String deliveryId) {
-		return findOrder(findAccount(accountId), deliveryId);
+		return findDelivery(findAccount(accountId), deliveryId);
 	}
 
-	private Delivery findOrder(Account account, String deliveryId) {
+	private Delivery findDelivery(Account account, String deliveryId) {
 		Delivery delivery = null;
 		if (account != null) {
 			List<Delivery> deliveries = account.getDeliveries();
@@ -150,23 +167,11 @@ public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesServic
 	}
 
 	@Override
-	public Delivery archiveDelivery(String accountId, Delivery deliveries) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Delivery activateDelivery(String accountId, Delivery deliveries) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Delivery muteNotifications(String accountId, Delivery deliveries) {
+	public Delivery muteNotifications(String accountId, Delivery delivery) {
 		Account a = findAccount(accountId);
-		Delivery o = findOrder(a, deliveries.getId());
+		Delivery o = findDelivery(a, delivery.getId());
 		if (o != null) {
-			o.setMuteNotifications(deliveries.isMuteNotifications());
+			o.setMuteNotifications(delivery.isMuteNotifications());
 		}
 
 		update(a);
@@ -174,11 +179,11 @@ public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesServic
 	}
 
 	@Override
-	public Delivery updateTreshold(String accountId, Delivery deliveries) {
+	public Delivery updateTreshold(String accountId, Delivery delivery) {
 		Account a = findAccount(accountId);
-		Delivery o = findOrder(a, deliveries.getId());
+		Delivery o = findDelivery(a, delivery.getId());
 		if (o != null) {
-			o.setThreshold(deliveries.getThreshold());
+			o.setThreshold(delivery.getThreshold());
 		}
 
 		update(a);
@@ -186,11 +191,11 @@ public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesServic
 	}
 
 	@Override
-	public Delivery changeState(String accountId, Delivery deliveries) {
+	public Delivery changeState(String accountId, Delivery delivery) {
 		Account a = findAccount(accountId);
-		Delivery o = findOrder(a, deliveries.getId());
+		Delivery o = findDelivery(a, delivery.getId());
 		if (o != null) {
-			o.setState(deliveries.getState());
+			o.setState(delivery.getState());
 		}
 
 		update(a);
@@ -198,11 +203,11 @@ public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesServic
 	}
 
 	@Override
-	public Delivery updateDescription(String accountId, Delivery deliveries) {
+	public Delivery updateDescription(String accountId, Delivery delivery) {
 		Account a = findAccount(accountId);
-		Delivery o = findOrder(a, deliveries.getId());
+		Delivery o = findDelivery(a, delivery.getId());
 		if (o != null) {
-			o.setDescription(deliveries.getDescription());
+			o.setDescription(delivery.getDescription());
 		}
 
 		update(a);
@@ -227,29 +232,44 @@ public class TestAccountDeliveriesServiceImpl implements AccountDeliveriesServic
 		mongoOperations.save(account, COLLECTION_NAME);
 	}
 
-	private Delivery generateDefaultOrderInformation(Delivery deliveries) {
+	private Delivery generateDefaultOrderInformation(Delivery delivery) {
 
-		deliveries.setCreationTime(System.currentTimeMillis());
-		deliveries.setLastNotificationTime(System.currentTimeMillis());
-		deliveries.setMuteNotifications(false);
-		deliveries.setState(DeliveryState.ACTIVE);
+		delivery.setCreationTime(System.currentTimeMillis());
+		delivery.setLastNotificationTime(System.currentTimeMillis());
+		delivery.setMuteNotifications(false);
+		delivery.setState(DeliveryState.ACTIVE);
 
-
-		if ((deliveries.getCarrier() != null && deliveries.getCarrier().equals(Carrier.UPS))
-				|| deliveries.getId().startsWith(UPS_PREFIX)) {
-			deliveries.setCarrier(Carrier.UPS);
-			deliveries.setThreshold(upsThreshold);
-		} else if ((deliveries.getCarrier() != null && deliveries.getCarrier().equals(Carrier.USPS))
-				|| deliveries.getId().startsWith(USPS_PREFIX)) {
-			deliveries.setCarrier(Carrier.USPS);
-			deliveries.setThreshold(uspsThreshold);
+		if ((delivery.getCarrier() != null && delivery.getCarrier().equals(Carrier.UPS))
+				|| delivery.getId().startsWith(UPS_PREFIX)) {
+			delivery.setCarrier(Carrier.UPS);
+			delivery.setThreshold(upsThreshold);
+		} else if ((delivery.getCarrier() != null && delivery.getCarrier().equals(Carrier.USPS))
+				|| delivery.getId().startsWith(USPS_PREFIX)) {
+			delivery.setCarrier(Carrier.USPS);
+			delivery.setThreshold(uspsThreshold);
 		} else {
 			logger.error(ErrorCodes.CARRIER_NOT_SUPPORTED
-					+ String.format(ErrorMessages.CARRIER_NOT_SUPPORTED_ERROR_MESSAGE.getErrorMessage(), deliveries
+					+ String.format(ErrorMessages.CARRIER_NOT_SUPPORTED_ERROR_MESSAGE.getErrorMessage(), delivery
 							.getCarrier().toString()));
 		}
 
-		return deliveries;
+		return delivery;
 	}
+
+	private Delivery setCarrierStatusUpdates(Delivery delivery) {
+		if (delivery.getCarrier().equals(Carrier.UPS)) {
+			delivery.setActivities(upsService.getActivityList(delivery.getId()));
+		} else if (delivery.getCarrier().equals(Carrier.USPS)) {
+			delivery.setActivities(uspsService.getActivityList(delivery.getId()));
+		} else {
+			logger.error(ErrorCodes.CARRIER_NOT_SUPPORTED
+					+ String.format(ErrorMessages.CARRIER_NOT_SUPPORTED_ERROR_MESSAGE.getErrorMessage(), delivery
+							.getCarrier().toString()));
+		}
+
+		return delivery;
+
+	}
+	
 
 }

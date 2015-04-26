@@ -2,6 +2,7 @@ package com.dimalimonov.tracking.integration.tests.rest;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.Carrier;
 import com.dimalimonov.tracking.domain.DeliveriesCollection;
 import com.dimalimonov.tracking.domain.Delivery;
+import com.dimalimonov.tracking.domain.DeliveryState;
 import com.dimalimonov.tracking.util.Constants;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -110,6 +112,59 @@ public class RestOrderControllerIT {
 
 		// Delete account
 		template.delete(accountUri);
+
+	}
+	
+	@Test
+	public void testFindDeliveriesByState() throws Exception {
+		Account a = new Account();
+
+		// Create brand new account
+		ResponseEntity<Account> response = template.postForEntity(Constants.BASE_ACCOUNT_URI, a, Account.class);
+
+		Assert.assertNotNull(response.getHeaders().getLocation());
+		String uri = response.getHeaders().getLocation().toString();
+
+		List<Delivery> list = new LinkedList<Delivery>();
+		
+		Delivery o = new Delivery();
+		o.setCarrier(Carrier.USPS);
+		o.setId("9405903699300380069915");
+		o.setDescription("My favorite Order");
+		
+		list.add(o);
+		
+		o = new Delivery();
+		o.setCarrier(Carrier.USPS);
+		o.setId("9405903699300372857186");
+		list.add(o);
+
+		DeliveriesCollection collection = new DeliveriesCollection();
+		collection.setDeliveries(list);
+
+		String deliveriesUri = uri + "/deliveries";
+
+		ResponseEntity<List> deliveriesResponse = template.postForEntity(deliveriesUri, collection, List.class);
+		Assert.assertEquals(HttpStatus.CREATED, deliveriesResponse.getStatusCode());
+		
+		
+		// Archive one delivery
+		o.setState(DeliveryState.ARCHIVED);
+		template.postForLocation(deliveriesUri + "/9405903699300372857186/state", o);
+
+		//find active deliveries
+		String activeUri = deliveriesUri+"?active";
+		ResponseEntity<List> actviveDeliveries = template.getForEntity(activeUri, List.class);
+		Assert.assertEquals(1, actviveDeliveries.getBody().size());
+
+		
+		// find archived deliveries
+		String archived = deliveriesUri+"?archived";
+		ResponseEntity<List> archivedDeliveries = template.getForEntity(archived, List.class);
+		Assert.assertEquals(1, archivedDeliveries.getBody().size());
+		
+		// Delete account
+		template.delete(uri);
 
 	}
 

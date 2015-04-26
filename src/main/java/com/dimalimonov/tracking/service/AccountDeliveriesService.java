@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.Delivery;
+import com.dimalimonov.tracking.domain.DeliveryState;
 
 public interface AccountDeliveriesService {
 
@@ -23,9 +24,7 @@ public interface AccountDeliveriesService {
 
 	public abstract List<Delivery> findDeliveries(String accountId);
 
-	public abstract Delivery archiveDelivery(String accountId, Delivery delivery);
-
-	public abstract Delivery activateDelivery(String accountId, Delivery delivery);
+	public abstract List<Delivery> findDeliveriesByState(String accountId, DeliveryState state );
 
 	public abstract Delivery changeState(String accountId, Delivery delivery);
 

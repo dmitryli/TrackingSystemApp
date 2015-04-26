@@ -29,9 +29,9 @@ import com.dimalimonov.tracking.service.AccountDeliveriesService;
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class OrdersLoadTest {
+public class DeliveriesLoadTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(OrdersLoadTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(DeliveriesLoadTest.class);
 
 	@Value("classpath:usps-numbers.txt")
 	private Resource uspsNumbers = null;

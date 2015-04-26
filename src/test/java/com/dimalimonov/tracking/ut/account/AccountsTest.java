@@ -21,9 +21,9 @@ import com.dimalimonov.tracking.service.AccountDeliveriesService;
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class AccountOrderServiceTest {
+public class AccountsTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(AccountOrderServiceTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(AccountsTest.class);
 
 	@Autowired
 	private AccountDeliveriesService accountOrderService = null;

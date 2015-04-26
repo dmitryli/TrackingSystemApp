@@ -23,9 +23,9 @@ import com.dimalimonov.tracking.service.AccountDeliveriesService;
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class DuplicateOrderTest {
+public class DuplicateDeliveriesTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(DuplicateOrderTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(DuplicateDeliveriesTest.class);
 	@Value("${usps.threshold}")
 	public Integer uspsThreshold = null;
 
