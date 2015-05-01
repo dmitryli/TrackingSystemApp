@@ -42,3 +42,11 @@ Network Trash Folder
 Temporary Items
 .apdisk
 /target/
+
+# UI files
+/src/pTrack/node_modules/
+/src/pTrack/app/bower_components/
+/src/pTrack/dist/
+.DS_Store
+.idea
+
