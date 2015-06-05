@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dimalimonov.tracking.util.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -23,9 +22,10 @@ public class User {
 	private String phoneNumber = null;
 	private String password = null;
 	private String role = null;
-	private boolean emailWhenNewOrderAdded = true;
-	private boolean emailWhenOrderStateChanges = true;
+	private boolean emailWhenNewOrderAdded = false;
+	private boolean emailWhenOrderStateChanges = false;
 	private boolean emailWhenThresholdExceeded = true;
+	private int archiveWaitPeriod = 1;
 	private int emailNotificationTime = 0;
 
 	private List<String> accountsList = new ArrayList<String>();
@@ -132,14 +132,14 @@ public class User {
 		this.emailNotificationTime = emailNotificationTime;
 	}
 
-	public Link getAccountLink() {
-		Link l = null;
-		if (getAccountId() != null) {
-			l = new Link();
-			l.setRel("account");
-			l.setHref(String.format(Constants.ACCOUNT_URI, getAccountId()));
-		}
-		return l;
+
+	public int getArchiveWaitPeriod() {
+		return archiveWaitPeriod;
 	}
+
+	public void setArchiveWaitPeriod(int archiveWaitPeriod) {
+		this.archiveWaitPeriod = archiveWaitPeriod;
+	}
+
 
 }

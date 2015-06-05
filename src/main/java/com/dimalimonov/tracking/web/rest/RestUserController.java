@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dimalimonov.tracking.domain.User;
 import com.dimalimonov.tracking.domain.Link;
 import com.dimalimonov.tracking.service.UserService;
-import com.dimalimonov.tracking.util.Constants;
+import com.dimalimonov.tracking.util.PTrackIUrlService;
+import com.dimalimonov.tracking.util.PTrackIUrlServiceImpl;
 
 @RestController
 public class RestUserController {
 
+	@Autowired
+	private PTrackIUrlService pTrackIUrlService = null;
+	
 	@Autowired
 	private UserService userService = null;
 
@@ -31,7 +35,7 @@ public class RestUserController {
 		if (user != null) {
 			l = new Link();
 			l.setRel("user");
-			l.setHref(String.format(Constants.USER_URI, user.getId()));
+			l.setHref(pTrackIUrlService.getSingleUsersURI(user.getId()));
 			re = ResponseEntity.ok(l);
 		} else {
 			re = new ResponseEntity<Link>(HttpStatus.NOT_FOUND);

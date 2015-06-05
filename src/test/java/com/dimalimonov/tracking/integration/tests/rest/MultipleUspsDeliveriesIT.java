@@ -3,10 +3,10 @@ package com.dimalimonov.tracking.integration.tests.rest;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,55 +27,38 @@ import com.dimalimonov.tracking.TrackingSystemApplication;
 import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.domain.DeliveriesCollection;
 import com.dimalimonov.tracking.domain.Delivery;
-import com.dimalimonov.tracking.domain.User;
 import com.dimalimonov.tracking.util.PTrackIUrlService;
-import com.dimalimonov.tracking.util.PTrackIUrlServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TrackingSystemApplication.class)
 @WebAppConfiguration
 @ActiveProfiles("production")
+public class MultipleUspsDeliveriesIT {
 
-public class FullEndToEndControllerIT {
-
-	private static final Logger logger = LoggerFactory.getLogger(FullEndToEndControllerIT.class);
+	private static final Logger logger = LoggerFactory.getLogger(MultipleUspsDeliveriesIT.class);
 
 	@Autowired
 	private PTrackIUrlService pTrackIUrlService = null;
-	
+
 	private RestTemplate template = new TestRestTemplate();
 
+	private RestTemplate authorizedTemplate = new TestRestTemplate("dmitryli@outlook.com", "integration");
 
 	@Value("classpath:usps-numbers.txt")
 	private Resource uspsNumbers = null;
-	
+
+	@Ignore
 	@Test
-	public void testEndToEnd() throws Exception {
-		User c = new User();
-		c.setDisplayName("My Test Customer");
-		c.setEmail("dmitryli@outlook.com");
-		c.setPassword("integration");
+	public void testCreateReadDeleteAccountWithManyUSPSOrders() throws Exception {
+		Account a = new Account();
 
-		ResponseEntity<List> response = template.postForEntity(pTrackIUrlService.getRegistratonURI(), c, List.class);
-		Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		// Create brand new account
+		ResponseEntity<Account> response = template.postForEntity(pTrackIUrlService.getAccountsURI(), a, Account.class);
 
-		List<Map<String, String>> list = (List<Map<String, String>>) response.getBody();
-		Map<String, String> accountMap = list.get(0);
-		String accountLink = accountMap.get("href");
-		logger.info("account {}", accountLink);
+		Assert.assertNotNull(response.getHeaders().getLocation());
+		String accountUri = response.getHeaders().getLocation().toString();
 
-		ResponseEntity<Account> accountEntity = template.getForEntity(accountLink, Account.class);
-		Assert.assertNotNull(accountEntity.getBody());
-		Assert.assertEquals(HttpStatus.OK, accountEntity.getStatusCode());
-
-		Map<String, String> userMap = list.get(1);
-		String userLink = userMap.get("href");
-		logger.info("user {}", userLink);
-		ResponseEntity<User> userEntity = template.getForEntity(userLink, User.class);
-		Assert.assertNotNull(userEntity.getBody());
-		Assert.assertEquals(HttpStatus.OK, userEntity.getStatusCode());
-
-		String deliveryUri = accountLink + "/deliveries";
+		String deliveryUri = accountUri + "/deliveries";
 
 		File file = uspsNumbers.getFile();
 		List<String> lines = FileUtils.readLines(file);
@@ -86,16 +69,15 @@ public class FullEndToEndControllerIT {
 			DeliveriesCollection collection = new DeliveriesCollection();
 			collection.setDeliveries(Collections.singletonList(o));
 			ResponseEntity<List> deliveryResponse = template.postForEntity(deliveryUri, collection, List.class);
-			Assert.assertEquals(HttpStatus.CREATED, deliveryResponse.getStatusCode());
+			Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 		}
 
 		// Find created account
-		Account found = template.getForObject(accountLink, Account.class);
+		Account found = template.getForObject(accountUri, Account.class);
 		Assert.assertNotNull(found);
-		
-		// Delete account and user
-		template.delete(accountLink);
-		template.delete(userLink);
+
+		// Delete account
+		template.delete(accountUri);
 
 	}
 

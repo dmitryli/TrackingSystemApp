@@ -33,4 +33,6 @@ public interface AccountDeliveriesService {
 	public abstract Delivery updateTreshold(String accountId, Delivery delivery);
 	
 	public Delivery updateDescription(String accountId, Delivery delivery);
+	
+	public void update(Account account); 
 }

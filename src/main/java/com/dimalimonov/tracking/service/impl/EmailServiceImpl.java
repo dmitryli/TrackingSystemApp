@@ -11,6 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.dimalimonov.tracking.domain.Feedback;
 import com.dimalimonov.tracking.service.EmailService;
 
 @Service("emailService")
@@ -80,6 +81,15 @@ public class EmailServiceImpl implements EmailService {
 
 	}
 
+	@Override
+	public void sendFeedbackAddedEmail(Feedback fb) {
+		String subject = "new feedback is added regarding account: " + fb.getSourceAccoundId();
+		String text = fb.getText();
+		sendEmail("dmitryli@outlook.com", subject, text);
+
+	}
+
+	
 	private void sendEmail(String email, String subject, String text) {
 		if (isSendEmailOn) {
 			SimpleMailMessage mimeMessage = new SimpleMailMessage();

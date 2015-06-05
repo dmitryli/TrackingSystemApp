@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dimalimonov.tracking.domain.Feedback;
+import com.dimalimonov.tracking.service.EmailService;
 import com.dimalimonov.tracking.service.FeedbackService;
-import com.dimalimonov.tracking.util.Constants;
+import com.dimalimonov.tracking.util.PTrackIUrlService;
 
 @RestController
 public class RestFeedbackController {
@@ -24,7 +25,13 @@ public class RestFeedbackController {
 	private static final Logger logger = LoggerFactory.getLogger(RestFeedbackController.class);
 
 	@Autowired
+	private PTrackIUrlService pTrackIUrlService = null;
+	
+	@Autowired
 	private FeedbackService feedbackService = null;
+	
+	@Autowired
+	private EmailService emailService = null;
 
 	@RequestMapping(value = "/feedbacks", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<Feedback> createFeedback(@RequestBody Feedback feedback) {
@@ -33,9 +40,11 @@ public class RestFeedbackController {
 		Feedback f = feedbackService.create(feedback);
 
 		HttpHeaders headers = new HttpHeaders();
-		String location = String.format(Constants.FEEDBACK_URI, f.getId());
+		String location = String.format(pTrackIUrlService.getAccountsURI(), f.getId());
 		headers.setLocation(URI.create(location));
 		ResponseEntity<Feedback> re = new ResponseEntity<Feedback>(f, headers, HttpStatus.CREATED);
+		
+		emailService.sendFeedbackAddedEmail(feedback);
 
 		return re;
 	}

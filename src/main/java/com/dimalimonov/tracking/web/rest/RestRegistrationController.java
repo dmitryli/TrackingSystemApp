@@ -22,11 +22,15 @@ import com.dimalimonov.tracking.domain.RegistrationResult;
 import com.dimalimonov.tracking.errors.DuplicateUserException;
 import com.dimalimonov.tracking.errors.RestError;
 import com.dimalimonov.tracking.service.RegistrationService;
-import com.dimalimonov.tracking.util.Constants;
+import com.dimalimonov.tracking.util.PTrackIUrlService;
+import com.dimalimonov.tracking.util.PTrackIUrlServiceImpl;
 
 @RestController
 public class RestRegistrationController {
 
+	@Autowired
+	private PTrackIUrlService pTrackIUrlService = null;
+	
 	@Autowired
 	private RegistrationService registrationService = null;
 
@@ -35,8 +39,9 @@ public class RestRegistrationController {
 
 		RegistrationResult register = registrationService.register(user);
 
-		String accountLocation = String.format(Constants.ACCOUNT_URI, register.getAccount().getId());
-		String userLocation = String.format(Constants.USER_URI, register.getUser().getId());
+		String accountLocation =  pTrackIUrlService.getSingleAccountsURI( register.getAccount().getId()); 
+				
+		String userLocation =pTrackIUrlService.getSingleUsersURI(user.getId());
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(URI.create(accountLocation));

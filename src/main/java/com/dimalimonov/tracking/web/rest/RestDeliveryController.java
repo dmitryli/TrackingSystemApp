@@ -18,18 +18,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dimalimonov.tracking.domain.Delivery;
 import com.dimalimonov.tracking.domain.DeliveriesCollection;
+import com.dimalimonov.tracking.domain.Delivery;
 import com.dimalimonov.tracking.domain.DeliveryState;
 import com.dimalimonov.tracking.errors.DuplicateDeliveryException;
 import com.dimalimonov.tracking.errors.RestError;
 import com.dimalimonov.tracking.service.AccountDeliveriesService;
-import com.dimalimonov.tracking.util.Constants;
+import com.dimalimonov.tracking.util.PTrackIUrlService;
 
 @RestController
 public class RestDeliveryController {
 
 	private static final Logger logger = LoggerFactory.getLogger(RestDeliveryController.class);
+	
+	@Autowired
+	private PTrackIUrlService pTrackIUrlService = null;
 
 	@Autowired
 	private AccountDeliveriesService accountService = null;
@@ -37,11 +40,12 @@ public class RestDeliveryController {
 	@RequestMapping(value = "/accounts/{id}/deliveries", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<List<Delivery>> addDeliveries(@PathVariable("id") String accountId,
 			@RequestBody DeliveriesCollection deliveriesCollection) {
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		logger.info("creating new deliveries for account {}", accountId);
 		List<Delivery> list = accountService.createDeliveries(accountId, deliveriesCollection.getDeliveries());
 
 		HttpHeaders headers = new HttpHeaders();
-		String location = String.format(Constants.ACCOUNT_URI, accountId);
+		String location = pTrackIUrlService.getSingleAccountsURI(accountId);
 		headers.setLocation(URI.create(location));
 		ResponseEntity<List<Delivery>> re = new ResponseEntity<List<Delivery>>(list, headers, HttpStatus.CREATED);
 		return re;
@@ -74,6 +78,13 @@ public class RestDeliveryController {
 		return accountService.findDelivery(accountId, deliveryId);
 	}
 
+//	@RequestMapping(value = "/accounts/{id}/deliveries/{deliveryId}", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+//	public void updateDelivery(@PathVariable("id") String accountId, @PathVariable("deliveryId") String deliveryId,
+//			@RequestBody Delivery delivery) {
+//		logger.info("update delivery {} on account {}", deliveryId, accountId);
+//
+//	}
+	
 	@RequestMapping(value = "/accounts/{id}/deliveries/{deliveryId}/mute", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public void muteDelivery(@PathVariable("id") String accountId, @PathVariable("deliveryId") String deliveryId,
 			@RequestBody Delivery delivery) {
@@ -109,6 +120,8 @@ public class RestDeliveryController {
 		accountService.updateDescription(accountId, delivery);
 
 	}
+	
+
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(DuplicateDeliveryException.class)

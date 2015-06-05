@@ -1,232 +1,45 @@
-<!doctype html>
-<html ng-app="">
+<!DOCTYPE html>
+<html lang="en" ng-app="pTrack"> 
 <head>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
-<!-- <script src="hello.js"></script>
-	<script src="orders.js"></script> -->
-<title>4Tracking101</title>
-
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>pTrack - track your deliveries</title>
+	<base href="/">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap.flatly.min.css">
+	<link rel="stylesheet" href="css/app.css">
 </head>
-<form class="form-horizontal" ng-controller="createAccount" ng-submit="createNewAccount()" ng-show="showSignUp" ng-hide="hideSignUp">
-	<div class="form-group">
-		<label class="col-sm-2 control-label">Display Name:</label>
-		<div class="col-sm-10">
-			<input type="text" ng-model="account.profile.userName" placeholder="Display Name">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-2 control-label">Email:</label>
-		<div class="col-sm-10">
-			<input type="text" ng-model="account.profile.email" placeholder="Email">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-2 control-label">Password:</label>
-		<div class="col-sm-10">
-			<input type="password" ng-model="account.profile.password" placeholder="Password">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-2 control-label">Repeat:</label>
-		<div class="col-sm-10">
-			<input type="password" ng-model="passw2" placeholder="Repeat Password">
-		</div>
-	</div>
-	<div class="form-group">
-		<div style="padding-left: 285px">
-			<input type="submit" value="Sign Up" class="btn btn-primary" />
-		</div>
-	</div>
-</form>
-
-<div ng-controller="showAccount">
-	<form class="form-horizontal" ng-submit="showOrders()" ng-show="!showTable">
-		<div class="form-group">
-			<label class="col-sm-2 control-label">Account:</label>
-			<div class="col-sm-10">
-				<input type="text" ng-model="account.id" placeholder="Account">
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top" ng-controller="NavController">
+		<div class="container-fluid col-sm-offset-1">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header" ng-class="menuClass('home')">
+				<a class="navbar-brand" href="#/home">
+					<span class="logo"></span>
+					<span class="appTitle">pTrack</span>
+				</a>
 			</div>
+
+			<ul class="nav navbar-nav hidden-xs">
+				<!-- <li ng-class="menuClass('home')"><a ng-href="#/home">Home</a></li> -->
+				<li ng-class="menuClass('deliveries')" ng-show="isLoggedIn"><a ng-href="#/deliveries">Deliveries</a></li>
+				<li ng-class="menuClass('settings')" ng-show="isLoggedIn"><a ng-href="#/settings">Settings</a></li>
+				<li ng-class="menuClass('feedback')" ng-show="isLoggedIn"><a ng-href="#/feedback">Feedback</a></li>
+				<li ng-class="menuClass('about')"><a ng-href="#/about">About</a></li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right hidden-xs">
+				<li ng-show="isLoggedIn"><a href><span class="glyphicon glyphicon-user"> </span> {{ currentUser.user.displayName }}</a></li>
+				<li ng-class="menuClass('logout')" ng-show="isLoggedIn"><a href ng-click="logout()">Logout</a></li>
+			</ul>
 		</div>
-		<div class="form-group">
-			<label class="col-sm-2 control-label">Password:</label>
-			<div class="col-sm-10">
-				<input type="password" ng-model="account.profile.password" placeholder="Password">
-			</div>
-		</div>
-		<div class="form-group">
-			<div style="padding-left: 285px">
-				<input type="submit" value="Sign In" class="btn btn-primary" />
-			</div>
-		</div>
+	</nav>
 
-	</form>
-
-	<div ng-show="showTable">
-		<h3>Welcome {{userName}},</h3>
-		<br /> <br /> <br /> Input Tracking Number:<br /> <input type="text" class="form-control" placeholder="Tracking Number"
-			ng-model="data.orders[0].id"></input>
-		<button ng-click="addTracking()">Add Tracking Number to account ## {{account.id}}</button>
-		<br /> <br />
-
-		<table id="t01" class="table table-striped">
-			<th>ID</th>
-			<th>Status</th>
-			<th>Carrier</th>
-			<th>Silence Notifications</th>
-			<th>Threshold</th>
-			<th>Save Changes</th>
-			<tr ng-repeat="order in orders">
-				<td id="td01">{{order.id}}</td>
-				<td>{{order.status}}</td>
-				<td>{{order.carrier}}</td>
-				<td><input type="checkBox" ng-model="order.silenceNotifications" ng-checked="{{order.silenceNotifications}}" /></td>
-				<td><input type="text" ng-model="order.treashold" value="{{order.treashold}}" /></td>
-				<td><input type="button" ng-click="updateOrder(order.id, order.silenceNotifications, order.treashold)" value="Save" /></td>
-
-			</tr>
-		</table>
-		<br /> <br />
-		<div>
-			Your feedback: <br />
-			<textarea rows="5" cols="50" ng-model="feedbackText"></textarea>
-			<br /> <input type="button" ng-click="submitFeedback(account.id)" value="Submit Feedback" />
-		</div>
-	</div>
-
-
-</div>
-
-
-
-
-<script>
-	function showAccount($scope, $rootScope, $http) {
-		$scope.showTable = false;
-
-		$scope.data = {
-			"orders" : [ {
-				"id" : ""
-			} ]
-		};
-		$scope.order = {
-			"silenceNotifications" : "",
-			"treashold" : 0
-		};
-		$scope.feedback = {
-			"sourceAccoundId" : "",
-			"text" : ""
-
-		}
-		$scope.isValidAccount = function() {
-			alert($scope.account.id + " " + $scope.account.profile.password);
-			var url = "/tracking/accounts/" + $scope.account.id;
-			var config = {
-				headers : {
-					'pass' :  $scope.account.profile.password
-				}
-			};
-			var res = $http.get(url, config).success(function(response, headers) {
-				alert(headers);
-			});
-		}
-		
-		$scope.getUserName = function() {
-			var url = "/tracking/accounts/" + $scope.account.id;
-			$http.get(url).success(function(response) {
-				$scope.userName = response.profile.userName;
-			});
-		}
-		$scope.showOrders = function() {
-			//$scope.isValidAccount();
-			$scope.getUserName();
-			var url = "/tracking/accounts/" + $scope.account.id + "/orders";
-			$http.get(url).success(function(response) {
-				$scope.orders = response;
-				$scope.showTable = true;
-				$rootScope.hideSignUp = true;
-			});
-		}
-		$scope.addTracking = function() {
-			var url = "/tracking/accounts/" + $scope.account.id + "/orders";
-			var res = $http.post(url, $scope.data);
-			res.success(function(data, status, headers, config) {
-				$scope.message = data;
-				$scope.data.orders[0].id = '';
-				$scope.showOrders();
-			});
-			res.error(function(data, status, headers, config) {
-				alert("failure message: " + JSON.stringify({
-					data : data
-				}));
-			});
-		}
-		$scope.updateOrder = function(orderId, silence, treashold) {
-			var url = "/tracking/accounts/" + $scope.account.id + "/orders/" + orderId;
-			$scope.order.silenceNotifications = silence;
-			$scope.order.treashold = treashold;
-
-			var res = $http.post(url, $scope.order);
-			res.success(function(data, status, headers, config) {
-				$scope.message = data;
-				alert("Your changes were saved");
-
-			});
-			res.error(function(data, status, headers, config) {
-				alert("failure message: " + JSON.stringify({
-					data : data
-				}));
-			});
-		}
-		$scope.submitFeedback = function(accountId) {
-			var url = "/tracking/feedbacks";
-			$scope.feedback.sourceAccoundId = accountId;
-			$scope.feedback.text = $scope.feedbackText;
-			var res = $http.post(url, $scope.feedback);
-			res.success(function(data, status, headers, config) {
-				$scope.message = data;
-				$scope.feedbackText = "";
-				alert("Thank you, your feedback was saved!");
-
-			});
-			res.error(function(data, status, headers, config) {
-				alert("failure message: " + JSON.stringify({
-					data : data
-				}));
-			});
-		}
-
-	}
-
-	function createAccount($scope, $rootScope, $http) {
-		$scope.showSignUp = true;
-		$scope.master = {
-			"profile" : {
-				"userName" : "",
-				"email" : "",
-				"password" : ""
-			}
-		};
-		$scope.accountId = "";
-		$scope.account = angular.copy($scope.master);
-		$scope.createNewAccount = function() {
-			var url = "/tracking/accounts";
-			var res = $http.post(url, $scope.account);
-			res.success(function(data, status, headers, config) {
-				$scope.message = data;
-				$scope.accountId = data.id;
-				$rootScope.accountId = data.id;
-				$scope.showSignUp = false;
-				$scope.account = angular.copy($scope.master);
-			});
-			res.error(function(data, status, headers, config) {
-				alert("failure message: " + JSON.stringify({
-					data : data
-				}));
-			});
-
-		}
-	}
-</script>
+	<div ng-view class="viewContainer container-fluid"></div>
+	
+	<script src="js/angular.min.js"></script>
+	<script src="js/app.min.js"></script>
+</body>
 </html>
-

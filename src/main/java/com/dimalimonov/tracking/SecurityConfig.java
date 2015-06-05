@@ -1,13 +1,10 @@
 package com.dimalimonov.tracking;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-@Configuration
+public class SecurityConfig {
+	
+}
+/*@Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -21,10 +18,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		// http.authorizeRequests().antMatchers(HttpMethod.POST,
-		// "/customers").permitAll().anyRequest().hasRole("USER");
-		// http.httpBasic();
-		http.authorizeRequests().anyRequest().permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.POST,"/registration/**").permitAll();
+		http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
+		http.rememberMe().disable();
+		http.sessionManagement().disable();
+		http.sessionManagement().enableSessionUrlRewriting(false);
 		http.csrf().disable();
+		http.logout().invalidateHttpSession(true).and().logout().deleteCookies("JSESSIONID");
+		http.csrf().disable();
+		
 	}
-}
+}*/

@@ -17,13 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dimalimonov.tracking.domain.Account;
 import com.dimalimonov.tracking.service.AccountDeliveriesService;
-import com.dimalimonov.tracking.util.Constants;
+import com.dimalimonov.tracking.util.PTrackIUrlService;
 
 @RestController
 public class RestAccountController {
 
 	private static final Logger logger = LoggerFactory.getLogger(RestAccountController.class);
 
+	@Autowired
+	private PTrackIUrlService pTrackIUrlService = null;
+	
 	@Autowired
 	private AccountDeliveriesService accountService = null;
 
@@ -34,7 +37,7 @@ public class RestAccountController {
 		Account created = accountService.createAccount(account);
 
 		HttpHeaders headers = new HttpHeaders();
-		String location = String.format(Constants.ACCOUNT_URI, account.getId());
+		String location =  pTrackIUrlService.getSingleAccountsURI(account.getId());
 		headers.setLocation(URI.create(location));
 		ResponseEntity<Account> re = new ResponseEntity<Account>(created, headers, HttpStatus.CREATED);
 
@@ -43,6 +46,7 @@ public class RestAccountController {
 
 	@RequestMapping(value = "/accounts/{id}", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<Account> getAccount(@PathVariable("id") String accountId) {
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		logger.info("getAccount {}", accountId);
 		Account c = accountService.findAccount(accountId);
 

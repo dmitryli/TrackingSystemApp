@@ -66,7 +66,7 @@ public class Delivery {
 		this.activities = activities;
 		if (this.activities!=null && this.activities.size() > 0) {
 			Activity lastActivity = activities.get(0);
-			if (lastActivity.getStatusDescription().contains("was delivered")) {
+			if (lastActivity.getStatusDescription().contains("was delivered") || lastActivity.getStatusDescription().contains("DELIVERED")) {
 				setDeliveryStatus(DeliveryStatus.DELIVERED);
 			} else {
 				setDeliveryStatus(DeliveryStatus.INTRANSIT);

@@ -43,11 +43,11 @@ Delete Account
 DELETE http://localhost:8080/accounts/{id}
 ------------------------------------------------
 
-Create Orders (1 for example)
+Create Delivery (1 for example)
 
-POST http://localhost:8080/accounts/{id}/orders
+POST http://localhost:8080/accounts/{id}/deliveries
 {
- "orders" : [
+ "deliveries" : [
  {
 	"id": "1Z3948A0YW49650167"
  }]

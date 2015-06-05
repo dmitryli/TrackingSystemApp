@@ -24,7 +24,6 @@ import com.dimalimonov.tracking.service.AccountDeliveriesService;
 import com.dimalimonov.tracking.service.CarrierService;
 
 @Service("accountOrderService")
-@Profile("production")
 public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 	private static final Logger logger = LoggerFactory.getLogger(AccountDeliveriesServiceImpl.class);
 	private static final String COLLECTION_NAME = "ptrackaccounts";
@@ -40,6 +39,10 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 
 	@Value("${ups.threshold}")
 	public Integer upsThreshold = null;
+	
+	@Value("${fedex.threshold}")
+	public Integer fedexThreshold = null;
+	
 
 	@Autowired
 	@Qualifier("upsService")
@@ -48,6 +51,10 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 	@Autowired
 	@Qualifier("uspsService")
 	private CarrierService uspsService = null;
+	
+	@Autowired
+	@Qualifier("fedexService")
+	private CarrierService fedexService = null;
 
 	@Autowired
 	private MongoOperations mongoOperations = null;
@@ -227,7 +234,7 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 		return duplicateList;
 	}
 
-	private void update(Account account) {
+	public void update(Account account) {
 		mongoOperations.save(account, COLLECTION_NAME);
 	}
 
@@ -237,16 +244,34 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 		delivery.setLastNotificationTime(System.currentTimeMillis());
 		delivery.setMuteNotifications(false);
 		delivery.setState(DeliveryState.ACTIVE);
+		
 
 		if ((delivery.getCarrier() != null && delivery.getCarrier().equals(Carrier.UPS))
 				|| delivery.getId().startsWith(UPS_PREFIX)) {
 			delivery.setCarrier(Carrier.UPS);
-			delivery.setThreshold(upsThreshold);
+			
+			if (delivery.getThreshold() <= 0) {
+				delivery.setThreshold(upsThreshold);	
+			}
+			
+			
 		} else if ((delivery.getCarrier() != null && delivery.getCarrier().equals(Carrier.USPS))
 				|| delivery.getId().startsWith(USPS_PREFIX)) {
 			delivery.setCarrier(Carrier.USPS);
-			delivery.setThreshold(uspsThreshold);
-		} else {
+			if (delivery.getThreshold() <= 0) {
+				delivery.setThreshold(uspsThreshold);	
+			}
+			
+		}else if (delivery.getCarrier() != null && delivery.getCarrier().equals(Carrier.FEDEX)){
+			delivery.setCarrier(Carrier.FEDEX);
+			if (delivery.getThreshold() <= 0) {
+				delivery.setThreshold(fedexThreshold);	
+			}
+			
+		}  
+		
+		
+		else {
 			logger.error(ErrorCodes.CARRIER_NOT_SUPPORTED
 					+ String.format(ErrorMessages.CARRIER_NOT_SUPPORTED_ERROR_MESSAGE.getErrorMessage(), delivery
 							.getCarrier().toString()));
@@ -260,7 +285,10 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 			delivery.setActivities(upsService.getActivityList(delivery.getId()));
 		} else if (delivery.getCarrier().equals(Carrier.USPS)) {
 			delivery.setActivities(uspsService.getActivityList(delivery.getId()));
-		} else {
+		}else if (delivery.getCarrier().equals(Carrier.FEDEX)) {
+			delivery.setActivities(fedexService.getActivityList(delivery.getId()));
+		}
+		else {
 			logger.error(ErrorCodes.CARRIER_NOT_SUPPORTED
 					+ String.format(ErrorMessages.CARRIER_NOT_SUPPORTED_ERROR_MESSAGE.getErrorMessage(), delivery
 							.getCarrier().toString()));
