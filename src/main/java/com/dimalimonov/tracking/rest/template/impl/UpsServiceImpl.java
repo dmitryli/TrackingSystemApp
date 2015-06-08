@@ -38,37 +38,48 @@ public class UpsServiceImpl implements CarrierService {
 		try {
 			Document document = DocumentHelper.parseText(fullStatus);
 			List<Element> activities = (List<Element>) document.selectNodes("/TrackResponse/Shipment/Package/Activity");
-			for (Element activity : activities) {
-				Activity a = new Activity();
+			if (activities != null && activities.size() > 0) {
 
-				Element e = (Element) activity.selectSingleNode("ActivityLocation/Address/City");
-				if (e != null) {
-					a.setCity(e.getText());
+				for (Element activity : activities) {
+					Activity a = new Activity();
+
+					Element e = (Element) activity.selectSingleNode("ActivityLocation/Address/City");
+					if (e != null) {
+						a.setCity(e.getText());
+					}
+					e = (Element) activity.selectSingleNode("ActivityLocation/Address/StateProvinceCode");
+					if (e != null) {
+						a.setStateProvinceCode(e.getText());
+					}
+					e = (Element) activity.selectSingleNode("ActivityLocation/Address/PostalCode");
+					if (e != null) {
+						a.setPostalCode(e.getText());
+					}
+
+					e = (Element) activity.selectSingleNode("ActivityLocation/Address/CountryCode");
+					if (e != null) {
+						a.setCountryCode(e.getText());
+					}
+
+					e = (Element) activity.selectSingleNode("Status/StatusType/Description");
+					a.setStatusDescription(e.getText());
+
+					e = (Element) activity.selectSingleNode("Date");
+					a.setDate(e.getText());
+
+					e = (Element) activity.selectSingleNode("Time");
+					a.setTime(e.getText());
+
+					activityList.add(a);
 				}
-				e = (Element) activity.selectSingleNode("ActivityLocation/Address/StateProvinceCode");
-				if (e != null) {
-					a.setStateProvinceCode(e.getText());
+			} else {
+				Element e = (Element) document.selectSingleNode("/TrackResponse/Response/Error/ErrorCode");
+				if (e!= null && e.getText().equals("150022")) {
+					Activity a = new Activity();
+					a.setStatusDescription("Invalid tracking number");
+					activityList.add(a);
 				}
-				e = (Element) activity.selectSingleNode("ActivityLocation/Address/PostalCode");
-				if (e != null) {
-					a.setPostalCode(e.getText());
-				}
-
-				e = (Element) activity.selectSingleNode("ActivityLocation/Address/CountryCode");
-				if (e != null) {
-					a.setCountryCode(e.getText());
-				}
-
-				e = (Element) activity.selectSingleNode("Status/StatusType/Description");
-				a.setStatusDescription(e.getText());
-
-				e = (Element) activity.selectSingleNode("Date");
-				a.setDate(e.getText());
-
-				e = (Element) activity.selectSingleNode("Time");
-				a.setTime(e.getText());
-
-				activityList.add(a);
+				
 			}
 			logger.info("Total of {}", activities.size());
 		} catch (DocumentException e) {

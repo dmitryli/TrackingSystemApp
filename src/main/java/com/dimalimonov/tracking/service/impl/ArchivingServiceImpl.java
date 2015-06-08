@@ -39,13 +39,16 @@ public class ArchivingServiceImpl {
 
 			// TODO: we should really archive an hour after it was delivered
 			for (Delivery d : deliveries) {
-				if (d.getDeliveryStatus().equals(DeliveryStatus.DELIVERED) && d.getState().equals(DeliveryState.ACTIVE)) {
-					if (System.currentTimeMillis() - d.getCreationTime() > getArchiveInterval()) {
-						logger.info("archiving delivery {} on account {}", d.getId(), a.getId());
-						d.setState(DeliveryState.ARCHIVED);
-						accountService.changeState(a.getId(), d);
+				if (d.getDeliveryStatus() != null) {
+					if (d.getDeliveryStatus().equals(DeliveryStatus.DELIVERED) && d.getState().equals(DeliveryState.ACTIVE)) {
+						if (System.currentTimeMillis() - d.getCreationTime() > getArchiveInterval()) {
+							logger.info("archiving delivery {} on account {}", d.getId(), a.getId());
+							d.setState(DeliveryState.ARCHIVED);
+							accountService.changeState(a.getId(), d);
+						}
 					}
 				}
+				
 			}
 		}
 		logger.info("Finished scheduled account deliveries archiver");

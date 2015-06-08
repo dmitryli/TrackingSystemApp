@@ -57,7 +57,7 @@ public class DeliveriesStatusCheckerImpl {
 
 			for (Delivery d : deliveries) {
 				// test only in transit deliveries
-				if (d.getDeliveryStatus().equals(DeliveryStatus.INTRANSIT)) {
+				if (d== null || !d.getDeliveryStatus().equals(DeliveryStatus.DELIVERED)) {
 					updateCarrierShippingInfo(d);
 				}
 			}

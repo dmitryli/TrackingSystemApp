@@ -71,6 +71,8 @@ public class Delivery {
 			} else {
 				setDeliveryStatus(DeliveryStatus.INTRANSIT);
 			}  
+		} else {
+			setDeliveryStatus(DeliveryStatus.UNAVAILABLE);
 		}
 	}
 

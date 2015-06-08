@@ -114,6 +114,7 @@ public class AccountDeliveriesServiceImpl implements AccountDeliveriesService {
 		}
 
 		update(account);
+		logger.info("Successfully added deliveries to account {}", account.getId());
 		return account.getDeliveries();
 
 	}
