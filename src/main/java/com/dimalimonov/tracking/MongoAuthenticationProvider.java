@@ -1,9 +1,22 @@
 package com.dimalimonov.tracking;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class MongoAuthenticationProvider {
-	
-/*@Service
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Service;
+
+import com.dimalimonov.tracking.domain.User;
+import com.dimalimonov.tracking.service.UserService;
+
+@Service
 public class MongoAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
@@ -21,7 +34,7 @@ public class MongoAuthenticationProvider implements AuthenticationProvider {
 		}
 		List<GrantedAuthority> grantedAuths = new ArrayList<>();
 		grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication auth = new UsernamePasswordAuthenticationToken(email, password, grantedAuths);
+		Authentication auth = new UsernamePasswordAuthenticationToken(registeredUser, password, grantedAuths);
 		return auth;
 	}
 
@@ -29,5 +42,5 @@ public class MongoAuthenticationProvider implements AuthenticationProvider {
 	public boolean supports(Class<?> authentication) {
 		return authentication.equals(UsernamePasswordAuthenticationToken.class);
 
-	}*/
+	}
 }
