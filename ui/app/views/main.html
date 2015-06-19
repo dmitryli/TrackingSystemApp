@@ -1,0 +1,31 @@
+
+<p><button class="btn btn-primary glyphicon glyphicon-plus" ng-click="showAddDelivery()"></button></p>
+<div ng-controller="AccordionController">
+	<accordion close-others="false">
+		<accordion-group is-open="true" ng-repeat="(key, value) in orders | groupBy: 'carrier'">
+			<accordion-heading>
+				<span class="{{ key }}"></span><span class="carrier">{{ key }}</span>
+			</accordion-heading>
+			<ul class="list-group">
+				<li class="list-group-item" ng-repeat="order in value" ng-class-odd="'odd'" ng-class-even="'even'">
+					<p class="list-group-item-heading">
+						<a href pt-carrier-link ng-click="showDetails" target="_blank">{{ order.id }}</a>
+						<button type="button" class="btn btn-primary pull-right">Close</button>
+					</p>
+					<h4 class="list-group-item-heading"><strong>{{ order.name }}</strong></h4>
+					<div class="list-group-item-text">{{ order.status }}</div>
+					<small>{{ order.creationTime | date }}</small>
+					<span class="pull-right btn btn-link btn-sm" ng-click="showHideOrderDetails(order)">
+						<span class="glyphicon" ng-class="{'glyphicon-chevron-up': order.isDetailsOpen, 'glyphicon-chevron-down': !order.isDetailsOpen}"></span>Details</span>
+					<ul class="list-group details" ng-show="order.isDetailsOpen">
+						<li class="list-group-item" ng-repeat="activity in order.activities" ng-class-odd="'odd'" ng-class-even="'even'">
+							<div><small>Date: {{ activity.date + ' ' + activity.time }}</small></div>
+							<div><small>{{ activity.city + ', ' + activity.stateProvinceCode}}</small></div>
+							<div class="list-group-item-text">{{activity.statusDescription}}</div>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</accordion-group>
+	</accordion>
+</div>

@@ -1,0 +1,82 @@
+<br><br>
+<div class="col-sm-offset-3 col-sm-8">
+	<form name="frmProfile" class="form-horizontal" ng-submit="update()" novalidate>
+		<fieldset>
+			<div class="form-group" ng-class="{ 'has-error': frmProfile.displayName.$invalid && !frmProfile.displayName.$pristine }">
+				<label for="displayName" class="col-sm-2 control-label">User Name</label>
+				<div class="input-group col-sm-4">
+					<input type="text" class="form-control" name="displayName" placeholder="User Name" ng-model="profile.displayName" required>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': frmProfile.email.$invalid && !frmProfile.email.$pristine }">
+				<label for="email" class="col-sm-2 control-label">Email</label>
+				<div class="input-group col-sm-4">
+					<span class="input-group-addon" id="basic-addon1">@</span>
+					<input type="email" class="form-control" name="email" placeholder="Email" ng-model="profile.email" required>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': frmProfile.phoneNumber.$invalid && !frmProfile.phoneNumber.$pristine }">
+				<label for="phoneNumber" class="col-sm-2 control-label">Phone</label>
+				<div class="input-group col-sm-4">
+					<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-earphone"></span></span>
+					<input type="text" class="form-control" name="phoneNumber" placeholder="Phone number" ng-model="profile.phoneNumber" ng-pattern="/^\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})$/">
+				</div>
+			</div>
+			<br>
+			<h4>Notification settings</h4>
+			<div class="form-group">
+				<span class="col-sm-2"></span>
+				<div class="checkbox input-group col-sm-4">
+					<label class="">
+						<input type="checkbox" name"emailWhenNewOrderAdded" ng-model="profile.emailWhenNewOrderAdded">
+						<strong>Email on new delivery</strong>
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<span class="col-sm-2"></span>
+				<div class="checkbox input-group col-sm-4">
+					<label class="">
+						<input type="checkbox" name"emailWhenOrderStateChanges" ng-model="profile.emailWhenOrderStateChanges">
+						<strong>Email on delivery update</strong>
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<span class="col-sm-2"></span>
+				<div class="checkbox input-group col-sm-4">
+					<label class="">
+						<input type="checkbox" name"emailWhenThresholdExceeded" ng-model="profile.emailWhenThresholdExceeded">
+						<strong>Email when threshold exceeded</strong>
+					</label>
+				</div>
+			</div>
+			<br>
+			<h4>Carriers notification tresholds</h4>
+			<div class="form-group" ng-class="{ 'has-error': frmProfile.th_ups.$invalid && !frmProfile.th_ups.$pristine }">
+				<label for="th_ups" class="col-sm-2 control-label">UPS</label>
+				<div class="input-group col-sm-4">
+					<select class="form-control" name="th_ups" ng-model="profile.defaultThreshold.UPS" ng-options="th.value as th.text for th in tresholds" required>
+						<option value="">Select threshold</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': frmProfile.th_usps.$invalid && !frmProfile.th_usps.$pristine }">
+				<label for="th_usps" class="col-sm-2 control-label">USPS</label>
+				<div class="input-group col-sm-4">
+					<select class="form-control" name="th_usps" ng-model="profile.defaultThreshold.USPS" ng-options="th.value as th.text for th in tresholds" required>
+						<option value="">Select threshold</option>
+					</select>
+				</div>
+			</div>
+			<br>
+			<div class="form-group">
+				<span class="col-sm-2">&nbsp;</span>
+				<div class="input-group col-sm-4">
+					<button type="submit" class="btn btn-primary col-sm-offset-1 pull-right" ng-disabled="frmProfile.$invalid">Update</button>
+					<button class="btn btn-default pull-right" ng-click="reset()">Reset</button>
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>

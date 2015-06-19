@@ -1,0 +1,81 @@
+<h1 class="col-sm-offset-1">{{ title }}</h1>
+<br>
+<div ng-hide="isLoggedIn">
+	<div class="col-sm-offset-1 col-sm-4" ng-controller="SignInController">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Sign In</h3>
+			</div>
+			<div class="panel-body">
+				<form name="loginFrm" class="form-horizontal" ng-submit="signin()" novalidate>
+					<div class="text-danger col-sm-8 col-sm-offset-3" ng-show="loginFrm.$error.auth">Login failed! user name or password is incorrect.</div>
+					<div class="form-group" ng-class="{ 'has-error': loginFrm.userName.$invalid && !loginFrm.userName.$pristine }">
+						<label for="userName" class="col-sm-3 control-label">Email</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" name="userName" placeholder="Email" ng-model="account.userName" required>
+						</div>
+					</div>
+					<div class="form-group" ng-class="{ 'has-error': loginFrm.password.$invalid && !loginFrm.password.$pristine }">
+						<label for="password" class="col-sm-3 control-label">Password</label>
+						<div class="col-sm-8">
+							<input type="password" class="form-control" name="password" placeholder="Password" ng-model="account.password" required>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-3 col-sm-8">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" ng-model="rememberMe"> Remember me
+								</label>
+							</div>
+							<button type="submit" class="btn btn-primary pull-right" ng-disabled="loginFrm.$invalid">Sign In</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<h4 class="col-sm-1 text-center">Or</h4>
+	<div class="col-sm-5" ng-controller="SignUpController">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Sign Up</h3>
+			</div>
+			<div class="panel-body">
+				<form name="signupFrm" class="form-horizontal" ng-submit="signup()" novalidate>
+
+					<div class="form-group" ng-class="{ 'has-error': signupFrm.userName.$invalid && !signupFrm.userName.$pristine }">
+						<label for="userName" class="col-sm-3 control-label">Display Name</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" name="userName" placeholder="User name" ng-model="newAccount.userName" required>
+						</div>
+					</div>
+					<div class="form-group" ng-class="{ 'has-error': signupFrm.email.$invalid && !signupFrm.email.$pristine }">
+						<label for="email" class="col-sm-3 control-label">Email</label>
+						<div class="col-sm-8">
+							<input type="email" class="form-control" name="email" placeholder="Email" ng-model="newAccount.email" required>
+						</div>
+					</div>
+					<div class="form-group" ng-class="{ 'has-error': signupFrm.password.$invalid && !signupFrm.password.$pristine || signupFrm.$error.password }">
+						<label for="password" class="col-sm-3 control-label">Password</label>
+						<div class="col-sm-8">
+							<input type="password" class="form-control" name="password" placeholder="Password" ng-model="newAccount.password" required>
+						</div>
+					</div>
+					<div class="form-group" ng-class="{ 'has-error': signupFrm.password.$invalid && !signupFrm.password.$pristine || signupFrm.$error.password}">
+						<label for="password2" class="col-sm-3 control-label">Confirm Password</label>
+						<div class="col-sm-8">
+							<input type="password" class="form-control" name="password2" placeholder="Password" ng-model="password2" required>
+						</div>
+					</div>
+					<div class="text-danger col-sm-8 col-sm-offset-3 has-error" ng-show="signupFrm.$error.password">Passwords does not match</div>
+					<div class="form-group">
+						<div class="col-sm-11">
+							<button type="submit" class="btn btn-primary pull-right" ng-disabled="signupFrm.$invalid">Sign Up</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

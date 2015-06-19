@@ -44,9 +44,9 @@ Temporary Items
 /target/
 
 # UI files
-/src/pTrack/node_modules/
-/src/pTrack/app/bower_components/
-/src/pTrack/dist/
+/ui/node_modules/
+/ui/app/bower_components/
+#/ui/dist/
 .DS_Store
 .idea
 

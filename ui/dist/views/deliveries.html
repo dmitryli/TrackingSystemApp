@@ -1,0 +1,97 @@
+<p class="clearfix">
+	<button class="btn btn-primary addBt pull-right btn-sm" ng-click="showAddDelivery()"><i class="glyphicon glyphicon-plus"></i><strong> Add</strong></button>
+</p>
+
+<div>
+	<tabset vertical="true" type="pills" class="col-sm-2">
+		<tab ng-click="changeStatus('overdue')">
+			<tab-heading>
+				<div><span>Overdue</span><span class="badge pull-right">{{ counters.overdue }}</span></div>
+			</tab-heading>
+		</tab>
+		<tab ng-click="changeStatus('on-track')">
+			<tab-heading>
+				<div><span>On Track</span><span class="badge pull-right">{{ counters.onTrack }}</span></div>
+			</tab-heading>
+		</tab>
+		<tab ng-click="changeStatus('archived')">
+			<tab-heading>
+				<div><span>Archived</span><span class="badge pull-right">{{ counters.archived }}</span></div>
+			</tab-heading>
+		</tab>
+	</tabset>
+
+	<ul class="list-group col-sm-10">
+		<li class="list-group-item text-center" ng-show="isEmptyList">No deliveries.<br>Click on Add button to add a delivery</li>
+
+		<li class="list-group-item" ng-repeat="delivery in deliveries | DeliveryStatus:status | orderBy:sortedStatus" ng-class-odd="'odd'" ng-class-even="'even'">
+			<div class="list-group-item-heading row">
+				<div class="col-sm-8">
+					<span class="col-sm-1">
+						<img pt-carrier-logo width="30">
+					</span>
+					<span class="col-sm-2">
+						<div class="label" ng-class="{ 'label-info': delivery.deliveryStatus === 'INTRANSIT', 'label-success': delivery.deliveryStatus === 'DELIVERED', 'label-default': delivery.deliveryStatus === 'UNKNOWN' }">{{ delivery.deliveryStatus | StatusFormat }}</div>
+					</span>
+					<span class="col-sm-2">
+						<a href pt-carrier-link ng-click="showDetails" target="_blank">{{ delivery.id }}</a>
+					</span>
+				</div>
+				<div class="col-sm-4" ng-controller='DeliveryProgressController' ng-hide="status === 'archived'">
+
+					<a href tooltip-placement="top" tooltip="{{ thresholdTime | date:'MM/dd/yyyy @ h:mma' }}">
+						<progress max="progress.max" min="0">
+							<bar value="progress.onTrack" type="info"></bar>
+							<bar value="progress.negOnTrack" type="none"></bar>
+							<bar value="1" type=""></bar>
+							<bar value="progress.overdue" type="danger" ng-hide="status !== 'overdue'"></bar>
+						</progress>
+					</a> 
+					
+					<div class="text-right">
+						<div class="btn-group" dropdown>
+							<button type="button" class="btn btn-primary dropdown-toggle btn-xs" dropdown-toggle ng-disabled="disabled">
+								Push Threshold by <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href ng-click="changeTreshold(1)">1 day</a></li>
+								<li><a href ng-click="changeTreshold(2)">2 days</a></li>
+								<li><a href ng-click="changeTreshold(3)">3 days</a></li>
+								<li><a href ng-click="changeTreshold(4)">4 days</a></li>
+								<li><a href ng-click="changeTreshold(5)">5 days</a></li>
+								<li><a href ng-click="changeTreshold(6)">6 days</a></li>
+								<li><a href ng-click="changeTreshold(7)">week</a></li>
+							</ul>
+						</div>
+						<a href class="btn btn-default btn-xs" ng-click="updateMute()">{{ delivery.muteNotifications ? 'Un Mute' : 'Mute'}}</a>
+						<a href class="btn btn-default btn-xs" ng-click="archived()">Archive</a>
+					</div>
+				</div>
+				
+			</div>
+			<h4>
+				<strong>{{ delivery.description }}</strong>
+			</h4>
+			<div class="row">
+				<span class="col-sm-11">
+					<small>{{ delivery.creationTime | date:'MM/dd/yyyy @ h:mma' }}</small>
+				</span>
+				<div class="col-sm-1 text-right">
+					<span class="btn btn-link btn-xs" ng-click="showHideDeliveryDetails(delivery)">
+						<span class="glyphicon" ng-class="{'glyphicon-chevron-up': delivery.isDetailsOpen, 'glyphicon-chevron-down': !delivery.isDetailsOpen}"></span>
+						Details
+					</span>
+				</div>
+					
+			</div>
+			<ul class="list-group details" ng-show="delivery.isDetailsOpen">
+				<li class="list-group-item" ng-repeat="activity in delivery.activities" ng-class-odd="'odd'" ng-class-even="'even'">
+					<div ng-show="{{ activity.date && activity.time }}"><small>Date: {{ activity.date + ' ' + activity.time }}</small></div>
+					<div ng-show="{{ activity.city }}"><small>{{ activity.city + ', ' + activity.stateProvinceCode}}</small></div>
+					<div class="list-group-item-text">{{activity.statusDescription}}</div>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+

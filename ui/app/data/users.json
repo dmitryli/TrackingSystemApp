@@ -1,0 +1,23 @@
+[{
+	"id": 1000,
+	"username": "admin@ptrack.com",
+	"password": "admin",
+	"firstName": "Admin",
+	"lastName": "Administrator",
+	"email": "admin@ptrack.com",
+	"address": "1234 Main st.",
+	"city": "Pleasanton",
+	"state": "CA",
+	"country": "USA"
+}, {
+	"id": 1001,
+	"username": "user@ptrack.com",
+	"password": "user",
+	"firstName": "User",
+	"lastName": "Last",
+	"email": "user@ptrack.com",
+	"address": "5544 Corday ct.",
+	"city": "Pleasanton",
+	"state": "CA",
+	"country": "USA"
+}]

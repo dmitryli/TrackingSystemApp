@@ -1,0 +1,19 @@
+<div class="well col-sm-8 col-sm-offset-2">
+	<h3>Feedback</h3>
+	<form name="fbForm" ng-show="!isSent" novalidate>
+		<div class="form-group">
+			<label for="fbText">Please provide your feedback</label>
+			<div>
+				<textarea class="form-control" rows="4" name="fbText" ng-model="frm.text" required></textarea>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="pull-right">
+				<button type="submit" class="btn btn-primary" ng-click="sendFeedback()" ng-disabled="fbForm.$invalid">Send</button>
+			</div>
+		</div>
+	</form>
+	<div ng-show="isSent" class="col-sm-offset-5">
+		<h4>Thank You!</h4>
+	</div>
+</div>

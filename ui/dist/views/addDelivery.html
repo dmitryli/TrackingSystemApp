@@ -1,0 +1,49 @@
+<div class="modal-header">
+	<h3 class="modal-title">Add Delivery</h3>
+</div>
+<div class="modal-body">
+	<form name="addForm" class="add-form form-horizontal" novalidate>
+		<div class="form-group" ng-class="{ 'has-error': addForm.trackingId.$invalid && !addForm.trackingId.$pristine }">
+			<label for="trackingId" class="col-sm-3 control-label">Tracking ID</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" name="trackingId" placeholder="Tracking ID" ng-model="frm.trackingId" required>
+			</div>
+		</div>
+		<div class="form-group" ng-class="{ 'has-error': addForm.carrier.$invalid && !addForm.carrier.$pristine }">
+			<label for="carrier" class="col-sm-3 control-label">Carrier</label>
+			<div class="col-sm-9">
+				<select class="form-control" name="carrier" ng-model="frm.carrier" required>
+				  <option value="">Select carrier</option>
+				  <option value="fedex">Fedex</option>
+				  <option value="ups">UPS</option>
+				  <option value="usps">USPS</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group" ng-class="{ 'has-error': addForm.threshold.$invalid && !addForm.threshold.$pristine }">
+			<label for="threshold" class="col-sm-3 control-label">Threshold</label>
+			<div class="col-sm-9">
+				<select class="form-control" name="threshold" ng-model="frm.threshold" required>
+					<option value="1">1 day</option>
+					<option value="2">2 days</option>
+					<option value="3">3 days</option>
+					<option value="4">4 days</option>
+					<option value="5">5 days</option>
+					<option value="6">6 days</option>
+					<option value="7">Week</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="deliveryDescription" class="col-sm-3 control-label">Description</label>
+			<div class="col-sm-9">
+				<input type="text" class="form-control" id="deliveryDescription" placeholder="Description" ng-model="frm.description">
+			</div>
+		</div>
+	</form>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="add()" ng-disabled="addForm.$invalid">Add</button>
+	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
