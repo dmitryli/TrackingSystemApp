@@ -14,17 +14,17 @@ ptControllers.controller('NavController', ['$scope', '$location', 'AuthService',
 		};
 
 		$scope.currentUser = currentUser;
-}]);
+	}
+]);
 
 ptControllers.controller('HomeController', ['$scope', 'currentUser', function ($scope, currentUser) {
 	$scope.$watch('isLoggedIn', function (isLoggedIn) {
 		if ($scope.isLoggedIn) {
 			$scope.title = 'Welcome to pTrack ' + currentUser.user.displayName;
-		}
-		else {
+		} else {
 			$scope.title = 'Welcome to pTrack';
 		}
-		
+
 	});
 }]);
 
@@ -32,8 +32,8 @@ ptControllers.controller('AboutController', ['$scope', function ($scope) {
 	// $scope.title = 'pTrack Home';
 }]);
 
-ptControllers.controller('SignInController', ['$scope', 'AuthService', 'Users', 'Store',
-	function ($scope, AuthService, Users, Store) {
+ptControllers.controller('SignInController', ['$scope', '$http', 'AuthService', 'Users', 'Store', 'Base64',
+	function ($scope, $http, AuthService, Users, Store, Base64) {
 		$scope.account = {
 			userName: Store.get('userName'),
 			password: ''
@@ -42,7 +42,11 @@ ptControllers.controller('SignInController', ['$scope', 'AuthService', 'Users', 
 		$scope.rememberMe = Store.get('rememberMe') || false;
 
 		$scope.signin = function () {
-			
+			// encode base64
+			var encStr = Base64.encode($scope.account.userName + ':' + $scope.account.password);
+			// set default authorization header to be used in all subsequent requests.
+			$http.defaults.headers.common.Authorization = 'Basic ' + encStr;
+
 			Users.signin({
 				email: $scope.account.userName
 			}).$promise.then(function (result) {
@@ -51,13 +55,12 @@ ptControllers.controller('SignInController', ['$scope', 'AuthService', 'Users', 
 				if ($scope.rememberMe) {
 					Store.set('userName', $scope.account.userName);
 					Store.set('rememberMe', true);
-				}
-				else {
+				} else {
 					Store.set('userName', null);
 					Store.set('rememberMe', false);
 				}
-				
-				if(result && result.href){
+
+				if (result && result.href) {
 					AuthService.login(result.href);
 				}
 
@@ -66,7 +69,8 @@ ptControllers.controller('SignInController', ['$scope', 'AuthService', 'Users', 
 				$scope.loginFrm.$setValidity();
 			});
 		};
-}]);
+	}
+]);
 
 ptControllers.controller('SignUpController', ['$scope', 'Registration', 'AuthService', function ($scope, Registration, AuthService) {
 	$scope.newAccount = {
@@ -81,7 +85,7 @@ ptControllers.controller('SignUpController', ['$scope', 'Registration', 'AuthSer
 
 		if ($scope.newAccount.password !== $scope.password2) {
 			$scope.signupFrm.password.$setValidity('password', false);
-			
+
 			$scope.$watch(function () {
 				return $scope.newAccount.password === $scope.password2;
 			}, function (newVal, oldVal) {
@@ -89,8 +93,7 @@ ptControllers.controller('SignUpController', ['$scope', 'Registration', 'AuthSer
 					$scope.signupFrm.password.$setValidity('password', true);
 				}
 			});
-		}
-		else{
+		} else {
 			$scope.signupFrm.password.$setValidity('password', true);
 			if ($scope.signupFrm.$valid) {
 				Registration.create({
@@ -101,7 +104,7 @@ ptControllers.controller('SignUpController', ['$scope', 'Registration', 'AuthSer
 					var userUrl = '';
 					if (results && results.length > 0) {
 						for (var i = 0; i < results.length; i++) {
-							if(results[i].rel === 'user'){
+							if (results[i].rel === 'user') {
 								userUrl = results[i].href;
 								break;
 							}
@@ -132,7 +135,7 @@ ptControllers.controller('DeliveriesController', ['$scope', 'currentUser', 'Deli
 			archived: 0
 		};
 
-		function isEmptyByStatus (status) {
+		function isEmptyByStatus(status) {
 			return $scope.counters[status] === 0;
 		}
 
@@ -166,7 +169,7 @@ ptControllers.controller('DeliveriesController', ['$scope', 'currentUser', 'Deli
 			});
 		};
 		$scope.loadOrders();
-		
+
 		$scope.showHideDeliveryDetails = function (order) {
 			order.isDetailsOpen = order.isDetailsOpen ? false : true;
 		};
@@ -317,21 +320,36 @@ ptControllers.controller('SettingsController', ['$scope', 'currentUser', 'Users'
 			UPS: 96
 		},
 		accountId: '',
-        accountLink: {
-            "rel": "account",
-            "href": "http://localhost:8080/tracking/accounts/"
-        }
+		accountLink: {
+			"rel": "account",
+			"href": "http://localhost:8080/tracking/accounts/"
+		}
 	};
 
 	$scope.title = 'Settings';
 
-	$scope.tresholds = [{ value: 24, text: '1 day'}, 
-	{ value: 48, text: '2 days'}, 
-	{ value: 72, text: '3 days' },
-	{ value: 96, text: '4 days' },
-	{ value: 120, text: '5 days' },
-	{ value: 144, text: '6 days' },
-	{ value: 168, text: '1 week' }];
+	$scope.tresholds = [{
+		value: 24,
+		text: '1 day'
+	}, {
+		value: 48,
+		text: '2 days'
+	}, {
+		value: 72,
+		text: '3 days'
+	}, {
+		value: 96,
+		text: '4 days'
+	}, {
+		value: 120,
+		text: '5 days'
+	}, {
+		value: 144,
+		text: '6 days'
+	}, {
+		value: 168,
+		text: '1 week'
+	}];
 
 	$scope.profile = defaultProfile;
 
