@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.mongodb.Mongo;
@@ -16,6 +17,7 @@ import com.mongodb.MongoClient;
 
 @Configuration
 @EnableScheduling
+@EnableAsync
 public class AppConfig {
 
 	@Value("${mail.host}")

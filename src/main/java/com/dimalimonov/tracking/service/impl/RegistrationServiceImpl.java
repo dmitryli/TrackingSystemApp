@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dimalimonov.tracking.domain.Account;
-import com.dimalimonov.tracking.domain.User;
 import com.dimalimonov.tracking.domain.RegistrationResult;
+import com.dimalimonov.tracking.domain.User;
 import com.dimalimonov.tracking.service.AccountDeliveriesService;
-import com.dimalimonov.tracking.service.UserService;
 import com.dimalimonov.tracking.service.EmailService;
 import com.dimalimonov.tracking.service.RegistrationService;
+import com.dimalimonov.tracking.service.UserService;
 
 @Service("registrationService")
 public class RegistrationServiceImpl implements RegistrationService {
@@ -23,7 +23,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 	@Autowired
 	private UserService userService = null;
-	
+
 	@Autowired
 	private EmailService emailService = null;
 
@@ -43,8 +43,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 		registration.setAccount(account);
 		registration.setUser(c);
 		logger.info("Completed registration for user {} with account {}", c.getEmail(), c.getAccountId());
-		
-		emailService.sendWelcomeEmail(c.getEmail(), c.getDisplayName(), account.getId());
+
+		emailService.sendWelcomeEmail(c.getEmail(), c.getDisplayName(), c.getAccountId());
+
 		return registration;
 	}
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.dimalimonov.tracking.domain.Feedback;
@@ -31,14 +32,18 @@ public class EmailServiceImpl implements EmailService {
 	private Locale locale = Locale.US;
 
 	@Override
+	@Async
 	public void sendWelcomeEmail(String email, String displayName, String account) {
+
 		String subject = emailMessages.getMessage("welcome.email.subject", null, Locale.US);
 		String text = emailMessages.getMessage("welcome.email.text", new Object[] { displayName, account }, locale);
+
 		sendEmail(email, subject, text);
 
 	}
 
 	@Override
+	@Async
 	public void sendGoodByeEmail(String email, String displayName, String account) {
 		String subject = emailMessages.getMessage("leaving.email.subject", null, Locale.US);
 		String text = emailMessages.getMessage("leaving.email.text", new Object[] { displayName, account }, locale);
@@ -47,41 +52,46 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
+	@Async
 	public void sendNotificationEmail(String email, String displayName, String deliveryId, String status) {
 		String subject = emailMessages.getMessage("notification.email.subject", null, Locale.US);
-		String text = emailMessages.getMessage("notification.email.text",
+		String text = emailMessages.getMessage("notification.email.text", new Object[] { displayName, deliveryId,
+				status }, locale);
+		sendEmail(email, subject, text);
+
+	}
+
+	@Override
+	@Async
+	public void sendNewOrderEmail(String email, String displayName, String deliveryId, String status) {
+		String subject = emailMessages.getMessage("newpackage.email.subject", null, Locale.US);
+		String text = emailMessages.getMessage("newpackage.email.text",
+				new Object[] { displayName, deliveryId, status }, locale);
+		sendEmail(email, subject, text);
+	}
+
+	@Override
+	@Async
+	public void sendThresholdExceededEmail(String email, String displayName, String deliveryId, String status) {
+		String subject = emailMessages.getMessage("threshold.email.subject", null, Locale.US);
+		String text = emailMessages.getMessage("threshold.email.text",
 				new Object[] { displayName, deliveryId, status }, locale);
 		sendEmail(email, subject, text);
 
 	}
 
 	@Override
-	public void sendNewOrderEmail(String email, String displayName, String deliveryId, String status) {
-		String subject = emailMessages.getMessage("newpackage.email.subject", null, Locale.US);
-		String text = emailMessages.getMessage("newpackage.email.text", new Object[] { displayName, deliveryId, status },
-				locale);
-		sendEmail(email, subject, text);
-	}
-
-	@Override
-	public void sendThresholdExceededEmail(String email, String displayName, String deliveryId, String status) {
-		String subject = emailMessages.getMessage("threshold.email.subject", null, Locale.US);
-		String text = emailMessages.getMessage("threshold.email.text", new Object[] { displayName, deliveryId, status },
-				locale);
-		sendEmail(email, subject, text);
-
-	}
-
-	@Override
+	@Async
 	public void sendThresholdExceededEmail(String email, String displayName, String[] deliveryId, String status) {
 		String subject = emailMessages.getMessage("threshold.email.subject", null, Locale.US);
-		String text = emailMessages.getMessage("threshold.email.text", new Object[] { displayName, deliveryId, status },
-				locale);
+		String text = emailMessages.getMessage("threshold.email.text",
+				new Object[] { displayName, deliveryId, status }, locale);
 		sendEmail(email, subject, text);
 
 	}
 
 	@Override
+	@Async
 	public void sendFeedbackAddedEmail(Feedback fb) {
 		String subject = "new feedback is added regarding account: " + fb.getSourceAccoundId();
 		String text = fb.getText();
@@ -89,14 +99,15 @@ public class EmailServiceImpl implements EmailService {
 
 	}
 
-	
 	private void sendEmail(String email, String subject, String text) {
 		if (isSendEmailOn) {
+			logger.info("Sending email for user {}", email);
 			SimpleMailMessage mimeMessage = new SimpleMailMessage();
 			mimeMessage.setTo(email);
 			mimeMessage.setSubject(subject);
 			mimeMessage.setText(text);
 			mailSender.send(mimeMessage);
+			logger.info("Sent email for user {} with account {}", email);
 		} else {
 			logger.info("Email is turned off");
 		}
