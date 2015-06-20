@@ -2,6 +2,7 @@
 	<h3 class="modal-title">Add Delivery</h3>
 </div>
 <div class="modal-body">
+	<alert ng-show="isError" type="danger">Server error. Please review the information and click Add button. If this repeat itself send us feedback.</alert>
 	<form name="addForm" class="add-form form-horizontal" novalidate>
 		<div class="form-group" ng-class="{ 'has-error': addForm.trackingId.$invalid && !addForm.trackingId.$pristine }">
 			<label for="trackingId" class="col-sm-3 control-label">Tracking ID</label>

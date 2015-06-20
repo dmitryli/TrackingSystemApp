@@ -281,8 +281,12 @@ ptControllers.controller('AddDeliveryController', ['$scope', '$modalInstance', '
 		threshold: 0
 	};
 
+	$scope.isError = false;
+
 	$scope.add = function () {
 		if ($scope.addForm.$valid) {
+
+			$scope.isError = false;
 
 			var dlv = new Deliveries();
 			dlv.deliveries = [{
@@ -294,9 +298,14 @@ ptControllers.controller('AddDeliveryController', ['$scope', '$modalInstance', '
 
 			Deliveries.add({
 				accountId: currentUser.user.accountId
-			}, dlv).$promise.then(function (results) {
-				$modalInstance.close(results);
-			});
+			}, dlv)
+			.$promise.then(
+				function (results) {
+					$modalInstance.close(results);
+				},
+				function (argument) {
+					$scope.isError = true;
+				});
 		}
 	};
 	$scope.cancel = function () {
